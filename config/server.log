@@ -1,0 +1,25 @@
+[1433971205 listensock]  listening (port: 40888)
+[1433971224 listensock]  (5) accepted connection (127.0.0.1)
+[1433971224       uuid]  (5) reserving uuid '4dc18bf3-996c-45b7-8594-be3875d0c2f2'
+[1433971227 listensock]  (6) accepted connection (127.0.0.1)
+[1433971227       uuid]  (6) uuid '4dc18bf3-996c-45b7-8594-be3875d0c2f2' already connected; used by cid 0
+[1433971230       game]  gabe (1) created game 1
+[1433971235       game]  gabe (0) joined game 1 (2/5)
+[1433971243       game]  game 1 has been started
+[1433971261 clientsock]  (5) socket closed (0: Undefined error: 0)
+[1433971261 clientsock]  (5) connection closed
+[1433971265 clientsock]  (6) socket closed (0: Undefined error: 0)
+[1433971265 clientsock]  (6) connection closed
+[1433971303 listensock]  (5) accepted connection (127.0.0.1)
+[1433971303       uuid]  (5) using previous cid (0) for uuid '4dc18bf3-996c-45b7-8594-be3875d0c2f2'
+[1433971321 listensock]  (6) accepted connection (127.0.0.1)
+[1433971321       uuid]  (6) uuid '4dc18bf3-996c-45b7-8594-be3875d0c2f2' already connected; used by cid 0
+[1433971327       game]  gabe (2) created game 2
+[1433971344       game]  gabe (0) joined game 2 (2/5)
+[1433971351       game]  game 2 has been started
+[1433971361 clientsock]  (6) socket closed (0: Undefined error: 0)
+[1433971361 clientsock]  (6) connection closed
+[1433971366 clientsock]  (5) socket closed (0: Undefined error: 0)
+[1433971366 clientsock]  (5) connection closed
+[1434034119       game]  deleting game 1
+[1434034148       game]  deleting game 2
