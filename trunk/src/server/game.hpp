@@ -46,6 +46,7 @@ typedef enum {
 } clientstate;
 
 //! \brief Client-connection information
+// GABE we can add a new field in here with the 2nd device connection
 typedef struct {
 	//! \brief Unique client identifier
 	int		id;
