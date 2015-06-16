@@ -1292,6 +1292,7 @@ void PClient::netConnected()
 	
 	wMain->updateConnectionStatus();
 	
+	// GABE make new introduction for the device.  Maybe PDEVICE which wraps the uuid of the other user...
 	// send protocol introduction
 	char msg[1024];
 	snprintf(msg, sizeof(msg), "PCLIENT %d %s",

@@ -1229,7 +1229,7 @@ int client_execute(clientcon *client, const char *cmd)
 	// get command argument
 	const string command = t.getNext();
 	
-	
+	// GABE this is the main parser for the client commands.  Important for device registration.
 	if (!(client->state & Introduced))  // state: not introduced
 	{
 		if (command == "PCLIENT")
