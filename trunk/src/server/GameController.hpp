@@ -127,6 +127,7 @@ protected:
 	
 	void snap(int tid, int sid, const char* msg="");
 	void snap(int cid, int tid, int sid, const char* msg="");
+	void protected_snap(int cid, int tid, int sid, const char* msg="");
 	
 	bool createWinlist(Table *t, std::vector< std::vector<HandStrength> > &winlist);
 	chips_type determineMinimumBet(Table *t) const;

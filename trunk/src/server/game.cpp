@@ -88,6 +88,22 @@ clientcon* get_client_by_id(int cid)
 	return NULL;
 }
 
+clientcon* get_client_by_uuid(string uuid)
+{
+	for (unsigned int i=0; i < clients.size(); i++)
+		if (clients[i].uuid == uuid)
+			return &(clients[i]);
+	
+	return NULL;
+}
+
+bool client_in_protected_mode(int cid) 
+{
+	clientcon *con = get_client_by_id(cid);
+	if (!con) return NULL;
+	return con->device_connected;
+}
+
 int send_msg(socktype sock, const char *message)
 {
 	char buf[MSG_BUFFER_SIZE];
@@ -214,6 +230,17 @@ bool table_chat(int from_cid, int to_gid, int to_tid, const char *message)
 	return true;
 }
 
+bool send_to_hole_device(int from_gid, int from_tid, int to, int sid, const char *message)
+{
+	char buf[MSG_BUFFER_SIZE];
+	snprintf(buf, sizeof(buf), "DEVICE %d:%d %d %s",
+				from_gid, from_tid, sid, message);
+	clientcon* toclient = get_client_by_id(to);
+	if (toclient && toclient->device_connected)
+		send_msg((toclient->device)->sock, buf);
+	return true;
+}
+
 bool client_snapshot(int from_gid, int from_tid, int to, int sid, const char *message)
 {
 	char buf[MSG_BUFFER_SIZE];
@@ -228,7 +255,6 @@ bool client_snapshot(int from_gid, int from_tid, int to, int sid, const char *me
 }
 
 //GABE Probably have to add a new send_to_hole_device type function
-
 bool client_snapshot(int to, int sid, const char *message)
 {
 	if (to == -1)  // to all
@@ -408,6 +434,47 @@ int client_cmd_pclient(clientcon *client, Tokenizer &t)
 		send_msg(client->sock, msg);
 	}
 	
+	return 0;
+}
+
+//TODO replace this with a devicecon
+int client_cmd_device(clientcon *client, Tokenizer &t) 
+{
+	//We still enforce the versioning in the same way that we treat a normal client
+	unsigned int version = t.getNextInt();
+	// uuid used to match the device with the proper client
+	string uuid = t.getNext();
+
+	if (version < VERSION_COMPAT)
+	{
+		log_msg("device", "device %d version (%d) too old", client->sock, version);
+		send_err(client, ErrWrongVersion, "The device version is too old."
+			"Please update your HoldingNuts device to a more recent version.");
+		client_remove(client->sock);
+	}
+	else
+	{
+
+		// ack the device
+		send_ok(client);
+
+		//see if there is a client with the same uuid as the device that is registering
+		clientcon *conc = get_client_by_uuid(uuid);
+		if(!conc)
+		{
+			//There is no client connected with that uuid.  We reject the connection from the device.
+			log_msg("device", "device %d connecting with uuid %s.  Unknown uuid.  Rejecting connection", client->sock, );
+			send_err(client, ErrUnknownUuid, "The device uuid is not associated with any connected client."
+				"Please check that the uuid of your device and client match");
+			//TODO This should probably be replaced with device_remove...
+			client_remove(client->sock);
+		}
+		//conc is non null, so we add the devicecon to the client
+		conc->device = client;
+		conc->device_connected = true;
+	}
+
+
 	return 0;
 }
 
@@ -1241,6 +1308,8 @@ int client_execute(clientcon *client, const char *cmd)
 			return -1;
 		}
 	}
+	else if (command == "PDEVICE")
+		return client_cmd_device(client, t);
 	else if (command == "INFO")
 		return client_cmd_info(client, t);
 	else if (command == "CHAT")

@@ -191,6 +191,11 @@ void GameController::snap(int cid, int tid, int sid, const char* msg)
 	client_snapshot(game_id, tid, cid, sid, msg);
 }
 
+void GameController::protected_snap(int cid, int tid, int sid, const char* msg)
+{
+	send_to_hole_device(game_id, tid, cid, sid, msg);
+}
+
 bool GameController::setPlayerAction(int cid, Player::PlayerAction action, chips_type amount)
 {
 	Player *p = findPlayer(cid);
@@ -412,11 +417,23 @@ void GameController::dealHole(Table *t)
 		p->holecards.setCards(c1, c2);
 		
 		char card1[3], card2[3];
-		strcpy(card1, c1.getName());
-		strcpy(card2, c2.getName());
-		snprintf(msg, sizeof(msg), "%d %s %s",
-			SnapCardsHole, card1, card2);
-		//GABE We have to edit where the hold cards go here
+
+		if(client_in_protected_mode(p->client_id)) {
+			strcpy(card1, c1.getProtectedName());
+			strcpy(card2, c2.getProtectedName());
+			snprintf(msg, sizeof(msg), "%d %s %s",
+				SnapCardsHole, card1, card2);
+
+			//deal with sending the hold cards to the device
+			protected_snap(p->client_id, t->table_id, SnapCards, msg)
+
+		} else {
+			strcpy(card1, c1.getName());
+			strcpy(card2, c2.getName());
+			snprintf(msg, sizeof(msg), "%d %s %s",
+				SnapCardsHole, card1, card2);
+		}
+		//We send out hole information to all clients.  If its protected, the card information itself will be protected.
 		snap(p->client_id, t->table_id, SnapCards, msg);
 		
 		

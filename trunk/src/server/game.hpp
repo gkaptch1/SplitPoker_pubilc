@@ -45,8 +45,29 @@ typedef enum {
 	Authed = 0x08
 } clientstate;
 
+typedef struct {
+
+	//! \breif unique device identifier
+	int 	id;
+
+	//! \breif Network Socket
+	socktype	sock;
+	//! \breif Saved address info
+	sockaddr_in	saddr;
+	//! \brief Client version
+	unsigned int	version;
+
+	//! \brief Receive-buffer for client messages
+	char	msgbuf[1024];
+	//! \brief Length of current buffer
+	int	buflen;
+	
+	//! \brief Id of last received message
+	int	last_msgid;
+
+} devicecon;
+
 //! \brief Client-connection information
-// GABE we can add a new field in here with the 2nd device connection
 typedef struct {
 	//! \brief Unique client identifier
 	int		id;
@@ -81,6 +102,13 @@ typedef struct {
 	time_t last_chat;
 	//! \brief Flood-protection: count of sent messages per interval
 	unsigned int chat_count;
+
+	//a client can have up to one device registered to its connection to the protected send hole cards
+	devicecon	device;
+
+	//a bool that indicates if there is a protection device registered to this connection
+	bool 		device_connected;
+
 } clientcon;
 
 //! \brief Archived client connection information
@@ -110,6 +138,6 @@ int client_handle(socktype sock);
 // used by GameController.cpp
 bool client_chat(int from_gid, int from_tid, int to, const char *message);
 bool client_snapshot(int from_gid, int from_tid, int to, int sid, const char *message);
-
+bool client_in_protected_mode(int cid); 
 
 #endif /* _GAME_H */

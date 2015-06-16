@@ -27,11 +27,11 @@
 
 static const char face_symbols[] = {
 	'2', '3', '4', '5', '6', '7', '8', '9',
-	'T', 'J', 'Q', 'K', 'A'
+	'T', 'J', 'Q', 'K', 'A' , 'P'
 };
 
 static const char suit_symbols[] = {
-	'c', 'd', 'h', 's'
+	'c', 'd', 'h', 's' , 'P'
 };
 
 
@@ -81,6 +81,18 @@ const char* Card::getName() const
 	card_name[2] = '\0';
 	
 	return card_name;
+}
+
+//TODO make this an ecrypted commitment
+const char* Card::getName() const
+{
+	static char protected_card_name[3];
+	
+	protected_card_name[0] = 'P';
+	protected_card_name[1] = 'P';
+	protected_card_name[2] = '\0';
+	
+	return protected_card_name;
 }
 
 Card::Face Card::convertFaceSymbol(char fsym)
