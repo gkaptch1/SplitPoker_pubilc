@@ -22,8 +22,8 @@
 
 
 /* this is the most portable way to include SDL includes (see SDL FAQ) */
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_audio.h>
+#include <SDL.h>
+#include <SDL_audio.h>
 
 #include "Config.h"
 #include "Debug.h"
