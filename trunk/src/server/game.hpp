@@ -124,6 +124,9 @@ typedef std::map<int,GameController*>	games_type;
 //! \brief Type for list of client connection information
 typedef std::vector<clientcon>	clients_type;
 
+//! \brief Type for list of device connection information
+typedef std::vector<devicecon>  devices_type;
+
 //! \brief Type for list of archived client connection information
 typedef std::map<std::string,clientcon_archive>	clientconar_type;
 

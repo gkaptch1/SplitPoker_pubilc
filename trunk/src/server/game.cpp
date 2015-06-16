@@ -47,7 +47,10 @@ static char msg[MSG_BUFFER_SIZE];
 static games_type games;
 static unsigned int gid_counter = 0;
 
+//Vector container for all the connected clients
 static clients_type clients;
+//Vector container for all the connected devices
+static devices_type devices;
 static unsigned int cid_counter = 0;
 
 
@@ -316,6 +319,17 @@ bool client_add(socktype sock, sockaddr_in *saddr)
 	return true;
 }
 
+//GABE adding the device add infustructure
+bool device_add(socktype sock, sockaddr_in *saddr)
+{
+	//TODO this needs to be finished
+	devicecon device;
+	memset(&device, 0, sizeof(device));
+	device.sock = sock;
+	device.saddr = *saddr;
+
+}
+
 bool client_remove(socktype sock)
 {
 	for (clients_type::iterator client = clients.begin(); client != clients.end(); client++)
@@ -325,6 +339,58 @@ bool client_remove(socktype sock)
 			socket_close(client->sock);
 			
 			bool send_msg = false;
+			if (client->state & SentInfo)
+			{
+				// remove player from unstarted games
+				for (games_type::iterator e = games.begin(); e != games.end(); e++)
+				{
+					GameController *g = e->second;
+					if (!g->isStarted() && g->isPlayer(client->id))
+						g->removePlayer(client->id);
+				}
+				
+				
+				snprintf(msg, sizeof(msg),
+					"%d %d \"%s\"",
+					SnapFoyerLeave, client->id, client->info.name);
+				
+				send_msg = true;
+				
+				// save client-con in archive
+				string uuid = client->uuid;
+				
+				if (uuid.length())
+				{
+					// FIXME: only add max. 3 entries for each IP
+					con_archive[uuid].logout_time = time(NULL);
+				}
+			}
+			
+			log_msg("clientsock", "(%d) connection closed", client->sock);
+			
+			clients.erase(client);
+			
+			// send foyer snapshot to all remaining clients
+			if (send_msg)
+				client_snapshot(-1, SnapFoyer, msg);
+			
+			break;
+		}
+	}
+	
+	return true;
+}
+
+bool device_remove(socktype sock) 
+{
+	for (devices_type::iterator device = devices.begin(); device != devices.end(); device++)
+	{
+		if (device->sock == sock)
+		{
+			socket_close(device->sock);
+			
+			bool send_msg = false;
+
 			if (client->state & SentInfo)
 			{
 				// remove player from unstarted games
@@ -438,7 +504,7 @@ int client_cmd_pclient(clientcon *client, Tokenizer &t)
 }
 
 //TODO replace this with a devicecon
-int client_cmd_device(clientcon *client, Tokenizer &t) 
+int client_cmd_device(devicecon *device, Tokenizer &t) 
 {
 	//We still enforce the versioning in the same way that we treat a normal client
 	unsigned int version = t.getNextInt();
@@ -456,7 +522,7 @@ int client_cmd_device(clientcon *client, Tokenizer &t)
 	{
 
 		// ack the device
-		send_ok(client);
+		send_ok(device);
 
 		//see if there is a client with the same uuid as the device that is registering
 		clientcon *conc = get_client_by_uuid(uuid);
@@ -467,7 +533,7 @@ int client_cmd_device(clientcon *client, Tokenizer &t)
 			send_err(client, ErrUnknownUuid, "The device uuid is not associated with any connected client."
 				"Please check that the uuid of your device and client match");
 			//TODO This should probably be replaced with device_remove...
-			client_remove(client->sock);
+			device_remove(client->sock);
 		}
 		//conc is non null, so we add the devicecon to the client
 		conc->device = client;
