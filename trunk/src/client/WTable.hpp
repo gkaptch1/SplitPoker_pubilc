@@ -150,6 +150,7 @@ private slots:
 	void actionMuck();
 	void actionBack();
 	void actionSitout();
+	void actionProtectedMode();
 	
 	void actionAutoFoldCheck(int state);
 	void actionAutoCheckCall(int state);
@@ -180,7 +181,11 @@ private:
 	//! \brief Table ID
 	const int	m_nTid;
 	// GABE protected mode
+#ifdef PROTECTED_MODE
+	bool		protected_mode = true;
+#else
 	bool		protected_mode = false;
+#endif
 
 	
 	QGraphicsView			*m_pView;
