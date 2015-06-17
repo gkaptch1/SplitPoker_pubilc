@@ -32,16 +32,16 @@
 extern ConfigParser config;
 
 // cards size
-const qreal Seat::sx_card = 96;
-const qreal Seat::sy_card = 138;
+const qreal Seat::sx_card = 72;  // 96
+const qreal Seat::sy_card = 102; //138
 
 // mini cards size
 // GABE make the mini cards the size of the big cards
 // origional
 // const qreal Seat::sx_mini_card = 41;
 // const qreal Seat::sy_mini_card = 58;
-const qreal Seat::sx_mini_card = 96;
-const qreal Seat::sy_mini_card = 138;
+const qreal Seat::sx_mini_card = 72;  //96
+const qreal Seat::sy_mini_card = 102; //138
 
 // In-Seat-Font
 QFont Seat::m_ftInSeat;
@@ -287,19 +287,19 @@ void Seat::paint(
 	qreal tx_pos = 0;
 	qreal ty_pos = 0;
 			
-	calcBetTextPos(tx_pos, ty_pos, m_fmInSeat.width(m_strAmount));
-
 	//Added by GABE
 	//Makes the text more visable for the video
-	m_ftInSeat.setPixelSize(40);
+	m_ftInSeat.setPixelSize(30);
+
+	calcBetTextPos(tx_pos, ty_pos, m_fmInSeat.width(m_strAmount));
 
 	painter->setFont(m_ftInSeat);
 	painter->drawText(
 		QRectF(
 			tx_pos,
 			ty_pos,
-			m_fmInSeat.width(m_strAmount),
-			m_fmInSeat.height()),
+			m_fmInSeat.width(m_strAmount)*4,
+			m_fmInSeat.height()*4),
 		Qt::AlignLeft,
 		m_strAmount);
 
