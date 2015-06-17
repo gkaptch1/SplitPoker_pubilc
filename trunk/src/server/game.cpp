@@ -1422,6 +1422,11 @@ int client_execute(clientcon *client, const char *cmd)
 	return 0;
 }
 
+int device_execute(clientcon *client, const char *cmd)
+{
+	//TODO put all the things that a device can send here.  Not sure what this needs to be stuffed with
+}
+
 // returns zero if no cmd was found or no bytes remaining after exec
 int client_parsebuffer(clientcon *client)
 {
@@ -1471,6 +1476,55 @@ int client_parsebuffer(clientcon *client)
 	return retval;
 }
 
+int device_parsebuffer(devicecon *device)
+{
+	//log_msg("clientsock", "(%d) parse (bufferlen=%d)", client->sock, client->buflen);
+	
+	int found_nl = -1;
+	for (int i=0; i < device->buflen; i++)
+	{
+		if (device->msgbuf[i] == '\r')
+			device->msgbuf[i] = ' ';  // space won't hurt
+		else if (device->msgbuf[i] == '\n')
+		{
+			found_nl = i;
+			break;
+		}
+	}
+	
+	int retval = 0;
+	
+	// is there a command in queue?
+	if (found_nl != -1)
+	{
+		// extract command
+		char cmd[sizeof(device->msgbuf)];
+		memcpy(cmd, device->msgbuf, found_nl);
+		cmd[found_nl] = '\0';
+		
+		//log_msg("clientsock", "(%d) command: '%s' (len=%d)", client->sock, cmd, found_nl);
+		if (device_execute(device, cmd) != -1)  // client quitted ?
+		{
+			// move the rest to front
+			memmove(device->msgbuf, device->msgbuf + found_nl + 1, device->buflen - (found_nl + 1));
+			device->buflen -= found_nl + 1;
+			//log_msg("clientsock", "(%d) new buffer after cmd (bufferlen=%d)", client->sock, client->buflen);
+			
+			retval = device->buflen;
+		}
+		else
+		{
+			//TODO figure out what to do here
+			//client_remove(client->sock);
+			retval = 0;
+		}
+	}
+	else
+		retval = 0;
+	
+	return retval;
+}
+
 int client_handle(socktype sock)
 {
 	char buf[1024];
@@ -1487,24 +1541,39 @@ int client_handle(socktype sock)
 	devicecon *device = get_device_by_sock(sock);
 	if (!client && !device)
 	{
-		log_msg("clientsock", "(%d) error: no client associated", sock);
+		log_msg("clientsock", "(%d) error: no client or device associated", sock);
 		return -1;
 	}
 	
-	//TODO How do we want to deal with buffers??
-
-	if (client->buflen + bytes > (int)sizeof(client->msgbuf))
-	{
-		log_msg("clientsock", "(%d) error: buffer size exceeded", sock);
-		client->buflen = 0;
+	if (client) {
+		if (client->buflen + bytes > (int)sizeof(client->msgbuf))
+		{
+			log_msg("clientsock", "(%d) error: buffer size exceeded", sock);
+			client->buflen = 0;
+		}
+		else
+		{
+			memcpy(client->msgbuf + client->buflen, buf, bytes);
+			client->buflen += bytes;
+			
+			// parse and execute all commands in queue
+			while (client_parsebuffer(client));
+		}
 	}
-	else
-	{
-		memcpy(client->msgbuf + client->buflen, buf, bytes);
-		client->buflen += bytes;
-		
-		// parse and execute all commands in queue
-		while (client_parsebuffer(client));
+	else if (device) {
+		if (device->buflen + bytes > (int)sizeof(device->msgbuf))
+		{
+			log_msg("devicesock", "(%d) error: buffer size exceeded", sock);
+			device->buflen = 0;
+		}
+		else
+		{
+			memcpy(device->msgbuf + device->buflen, buf, bytes);
+			device->buflen += bytes;
+			
+			// parse and execute all commands in queue
+			while (device_parsebuffer(client));
+		}
 	}
 	
 	return bytes;
