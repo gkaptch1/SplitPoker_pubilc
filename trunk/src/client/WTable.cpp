@@ -338,9 +338,10 @@ WTable::WTable(int gid, int tid, QWidget *parent)
 	btnBack->setFixedWidth(actionbtn_width);
 	connect(btnBack, SIGNAL(clicked()), this, SLOT(actionBack()));
 	
-	QPushButton *btnSitout = new QPushButton(tr("Sit&out"), this);
+	//Gabe Edited
+	QPushButton *btnSitout = new QPushButton(tr("Sit&Out"), this);
 	btnSitout->setFixedWidth(actionbtn_width);
-	connect(btnSitout, SIGNAL(clicked()), this, SLOT(actionSitout()));
+	connect(btnSitout, SIGNAL(clicked()), this, SLOT(actionSitOut()));
 	
 	
 	// bet shortcuts
@@ -487,6 +488,9 @@ WTable::WTable(int gid, int tid, QWidget *parent)
 	
 	shortcutBack = new QShortcut(tr("Ctrl+K"), this);
 	connect(shortcutBack, SIGNAL(activated()), this, SLOT(actionBack()));
+
+	shortcutBack = new QShortcut(tr("Ctrl+P"), this);
+	connect(shortcutBack, SIGNAL(activated()), this, SLOT(actionProtectedMode()));
 	
 	// assign shortcut for making screenshot
 	QShortcut *shortcutScreenshot = new QShortcut(Qt::Key_F10, this);
@@ -955,9 +959,9 @@ void WTable::updateSeat(unsigned int s)
 				strcpy(card2, allcards[1].getName());
 				
 				//For protected cards
-				if (protected_mode && snap->state != Table::EndRound 
-					&& snap->state != Table::Showdown && snap->state != Table::AskShow ) 
-					ui_seat->setCards("protected", "protected");
+				if (protected_mode && 
+					!(snap->state == Table::EndRound || snap->state == Table::Showdown || snap->state == Table::AskShow) ) 
+						ui_seat->setCards("protected", "protected");
 				else 
 					ui_seat->setCards(card1, card2);
 				
@@ -1355,6 +1359,14 @@ void WTable::actionSitout()
 	((PClient*)qApp)->doSetAction(m_nGid, Player::Sitout);
 	
 	doSitout(true);
+}
+
+void WTable::actionProtectedMode()
+{
+	//Flip if we are in protected mode or not
+	WTable::protected_mode = !(WTable::protected_mode);
+	// Rerender the graphics
+	WTable::slotShow();
 }
 
 void WTable::actionBack()

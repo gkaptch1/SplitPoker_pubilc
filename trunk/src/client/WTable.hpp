@@ -150,6 +150,7 @@ private slots:
 	void actionMuck();
 	void actionBack();
 	void actionSitout();
+	void actionProtectedMode();
 	
 	void actionAutoFoldCheck(int state);
 	void actionAutoCheckCall(int state);
