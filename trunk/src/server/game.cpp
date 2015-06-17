@@ -49,8 +49,6 @@ static unsigned int gid_counter = 0;
 
 //Vector container for all the connected clients
 static clients_type clients;
-//Vector container for all the connected devices
-static devices_type devices;
 static unsigned int cid_counter = 0;
 
 
@@ -79,6 +77,16 @@ clientcon* get_client_by_sock(socktype sock)
 		if (clients[i].sock == sock)
 			return &(clients[i]);
 	
+	return NULL;
+}
+
+devicecon* get_device_by_sock(socktype sock)
+{
+	for (unsigned int i=0; i < clients.size(); i++) {
+		if (clients[i].device_connected && clients[i].device.sock == sock)
+			return &(clients[i].device);
+	}
+
 	return NULL;
 }
 
@@ -319,17 +327,6 @@ bool client_add(socktype sock, sockaddr_in *saddr)
 	return true;
 }
 
-//GABE adding the device add infustructure
-bool device_add(socktype sock, sockaddr_in *saddr)
-{
-	//TODO this needs to be finished
-	devicecon device;
-	memset(&device, 0, sizeof(device));
-	device.sock = sock;
-	device.saddr = *saddr;
-
-}
-
 bool client_remove(socktype sock)
 {
 	for (clients_type::iterator client = clients.begin(); client != clients.end(); client++)
@@ -379,6 +376,12 @@ bool client_remove(socktype sock)
 	}
 	
 	return true;
+}
+
+bool client_remove_without_teardown(socktype sock)
+{
+	//This is used to reassign a known socket connectioin from clientcon to devicecon
+	//TODO implement
 }
 
 bool device_remove(socktype sock) 
@@ -503,8 +506,9 @@ int client_cmd_pclient(clientcon *client, Tokenizer &t)
 	return 0;
 }
 
-//TODO replace this with a devicecon
-int client_cmd_device(devicecon *device, Tokenizer &t) 
+// When something connects to the server, it connects as a client.  Once it announces itself as
+// a device, we attempt to register it as a device instead
+int client_cmd_device(clientcon *device, Tokenizer &t) 
 {
 	//We still enforce the versioning in the same way that we treat a normal client
 	unsigned int version = t.getNextInt();
@@ -532,11 +536,24 @@ int client_cmd_device(devicecon *device, Tokenizer &t)
 			log_msg("device", "device %d connecting with uuid %s.  Unknown uuid.  Rejecting connection", client->sock, );
 			send_err(client, ErrUnknownUuid, "The device uuid is not associated with any connected client."
 				"Please check that the uuid of your device and client match");
-			//TODO This should probably be replaced with device_remove...
-			device_remove(client->sock);
+			//remove it from the list of known clients and make it reconnect
+			client_remove(device->sock);
 		}
 		//conc is non null, so we add the devicecon to the client
-		conc->device = client;
+
+		//generate a new device to hand to the proper client
+		devicecon new_device;
+		memset(&new_device, 0, sizeof(new_device));
+		new_device.sock = device->sock;
+		new_device.saddr = device->saddr;
+		new_device.version = version;
+
+
+		//remove the record of the device from the client list.
+		client_remove_without_teardown(device->sock);
+
+		//Attaching the new device to the client it is associated with
+		conc->device = new_device;
 		conc->device_connected = true;
 	}
 
@@ -1467,12 +1484,15 @@ int client_handle(socktype sock)
 	//log_msg("clientsock", "(%d) DATA len=%d", sock, bytes);
 	
 	clientcon *client = get_client_by_sock(sock);
-	if (!client)
+	devicecon *device = get_device_by_sock(sock);
+	if (!client && !device)
 	{
 		log_msg("clientsock", "(%d) error: no client associated", sock);
 		return -1;
 	}
 	
+	//TODO How do we want to deal with buffers??
+
 	if (client->buflen + bytes > (int)sizeof(client->msgbuf))
 	{
 		log_msg("clientsock", "(%d) error: buffer size exceeded", sock);
