@@ -283,7 +283,7 @@ WTable::WTable(int gid, int tid, QWidget *parent)
 	QFont font = QApplication::font();
 	
 	//changed by GABE 20 to 60
-	font.setPointSize(60); 
+	font.setPointSize(40); 
 	font.setBold(true);
 	
 	const QFontMetrics fm(font);
@@ -588,7 +588,7 @@ QPointF WTable::calcCCardsPos(unsigned int nCard) const
 
 	return QPointF(
 		((m_pScene->width() - (5 * card_width - card_spacing)) / 2) + nCard * card_width,
-		m_pScene->height() * 0.375);
+		m_pScene->height() * 0.4);
 }
 
 QPointF WTable::calcTimeoutPos(unsigned int nSeatID) const
@@ -628,7 +628,7 @@ QPointF WTable::calcPotsPos() const
 	
 	return QPointF(
 		ptCenter.x() - (fm.width(m_pTxtPots->text()) / 2),
-		220);
+		280);
 }
 
 QPointF WTable::calcDealerBtnPos(

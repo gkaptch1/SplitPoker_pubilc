@@ -398,6 +398,8 @@ void Seat::calcBetTextPos(qreal& x, qreal& y, int txt_width) const
 
 	switch (m_nID)
 	{
+		
+		/*
 		case 1: case 2:
 				x = -(txt_width + 10);
 				y = SeatImages::Instance().imgBack.height() - 30;
@@ -413,6 +415,27 @@ void Seat::calcBetTextPos(qreal& x, qreal& y, int txt_width) const
 		case 6: case 7:
 				x = SeatImages::Instance().imgBack.width() + sx_mini_card + 10;
 				y = SeatImages::Instance().imgBack.height() - 30;
+			break;
+			*/
+		case 1: case 2:
+				x = -.5 * sx_mini_card;//-sx_mini_card * 1.5;
+				y = - 1.15 * sy_mini_card; //0;
+			break;
+		case 3: case 5:
+				x = .5 * sx_mini_card; //0;
+				y = -(sy_mini_card + 38); //-(sy_mini_card + 5);				
+			break;
+		case 4:
+				x = 1.75 * sx_mini_card; //0;
+				y = -(sy_mini_card + 35); //-(sy_mini_card + 5);
+			break;
+		case 8: case 9: case 0:
+				x = .5 * sx_mini_card; //0;
+				y = SeatImages::Instance().imgBack.height() + 1.15 * sy_mini_card;//SeatImages::Instance().imgBack.height() + 5;
+			break;
+		case 6: case 7:
+				x = SeatImages::Instance().imgBack.width() + 2.75 * sx_mini_card; //SeatImages::Instance().imgBack.width() + sx_mini_card + 5;
+				y = sy_mini_card/3; //0;
 			break;
 	}
 }
