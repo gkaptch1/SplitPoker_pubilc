@@ -180,7 +180,11 @@ private:
 	//! \brief Table ID
 	const int	m_nTid;
 	// GABE protected mode
+#ifdef PROTECTED_MODE
+	bool		protected_mode = true;
+#else
 	bool		protected_mode = false;
+#endif
 
 	
 	QGraphicsView			*m_pView;
