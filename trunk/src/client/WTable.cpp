@@ -960,7 +960,7 @@ void WTable::updateSeat(unsigned int s)
 				
 				//For protected cards
 				if (protected_mode && 
-					!(snap->state == Table::EndRound || snap->state == Table::Showdown || snap->state == Table::AskShow) ) 
+					!(snap->state == Table::EndRound || snap->state == Table::Showdown) ) 
 						ui_seat->setCards("protected", "protected");
 				else 
 					ui_seat->setCards(card1, card2);
