@@ -41,7 +41,7 @@ public:
 		Queen,
 		King,
 		Ace,
-		Protected
+		Protected,
 		
 		FirstFace=Two,
 		LastFace=Protected
@@ -52,7 +52,7 @@ public:
 		Diamonds,
 		Hearts,
 		Spades,
-		Protected
+		ProtectedSuit,
 		
 		FirstSuit=Clubs,
 		LastSuit=Protected

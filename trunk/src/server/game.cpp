@@ -111,7 +111,7 @@ clientcon* get_client_by_uuid(string uuid)
 bool client_in_protected_mode(int cid) 
 {
 	clientcon *con = get_client_by_id(cid);
-	if (!con) return NULL;
+	if (!con) return false;
 	return con->device_connected;
 }
 
@@ -248,7 +248,7 @@ bool send_to_hole_device(int from_gid, int from_tid, int to, int sid, const char
 				from_gid, from_tid, sid, message);
 	clientcon* toclient = get_client_by_id(to);
 	if (toclient && toclient->device_connected)
-		send_msg((toclient->device)->sock, buf);
+		send_msg((toclient->device).sock, buf);
 	return true;
 }
 
@@ -384,58 +384,6 @@ bool client_remove_without_teardown(socktype sock)
 	//TODO implement
 }
 
-bool device_remove(socktype sock) 
-{
-	for (devices_type::iterator device = devices.begin(); device != devices.end(); device++)
-	{
-		if (device->sock == sock)
-		{
-			socket_close(device->sock);
-			
-			bool send_msg = false;
-
-			if (client->state & SentInfo)
-			{
-				// remove player from unstarted games
-				for (games_type::iterator e = games.begin(); e != games.end(); e++)
-				{
-					GameController *g = e->second;
-					if (!g->isStarted() && g->isPlayer(client->id))
-						g->removePlayer(client->id);
-				}
-				
-				
-				snprintf(msg, sizeof(msg),
-					"%d %d \"%s\"",
-					SnapFoyerLeave, client->id, client->info.name);
-				
-				send_msg = true;
-				
-				// save client-con in archive
-				string uuid = client->uuid;
-				
-				if (uuid.length())
-				{
-					// FIXME: only add max. 3 entries for each IP
-					con_archive[uuid].logout_time = time(NULL);
-				}
-			}
-			
-			log_msg("clientsock", "(%d) connection closed", client->sock);
-			
-			clients.erase(client);
-			
-			// send foyer snapshot to all remaining clients
-			if (send_msg)
-				client_snapshot(-1, SnapFoyer, msg);
-			
-			break;
-		}
-	}
-	
-	return true;
-}
-
 int client_cmd_pclient(clientcon *client, Tokenizer &t)
 {
 	unsigned int version = t.getNextInt();
@@ -517,10 +465,10 @@ int client_cmd_device(clientcon *device, Tokenizer &t)
 
 	if (version < VERSION_COMPAT)
 	{
-		log_msg("device", "device %d version (%d) too old", client->sock, version);
-		send_err(client, ErrWrongVersion, "The device version is too old."
+		log_msg("device", "device %d version (%d) too old", device->sock, version);
+		send_err(device, ErrWrongVersion, "The device version is too old."
 			"Please update your HoldingNuts device to a more recent version.");
-		client_remove(client->sock);
+		client_remove(device->sock);
 	}
 	else
 	{
@@ -533,8 +481,8 @@ int client_cmd_device(clientcon *device, Tokenizer &t)
 		if(!conc)
 		{
 			//There is no client connected with that uuid.  We reject the connection from the device.
-			log_msg("device", "device %d connecting with uuid %s.  Unknown uuid.  Rejecting connection", client->sock, );
-			send_err(client, ErrUnknownUuid, "The device uuid is not associated with any connected client."
+			log_msg("device", "device %d connecting with unknown uuid.  Rejecting connection", device->sock);
+			send_err(device, ErrUnknownUuid, "The device uuid is not associated with any connected client."
 				"Please check that the uuid of your device and client match");
 			//remove it from the list of known clients and make it reconnect
 			client_remove(device->sock);
@@ -1422,7 +1370,7 @@ int client_execute(clientcon *client, const char *cmd)
 	return 0;
 }
 
-int device_execute(clientcon *client, const char *cmd)
+int device_execute(devicecon *device, const char *cmd)
 {
 	//TODO put all the things that a device can send here.  Not sure what this needs to be stuffed with
 }
@@ -1572,7 +1520,7 @@ int client_handle(socktype sock)
 			device->buflen += bytes;
 			
 			// parse and execute all commands in queue
-			while (device_parsebuffer(client));
+			while (device_parsebuffer(device));
 		}
 	}
 	

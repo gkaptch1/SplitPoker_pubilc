@@ -139,5 +139,6 @@ int client_handle(socktype sock);
 bool client_chat(int from_gid, int from_tid, int to, const char *message);
 bool client_snapshot(int from_gid, int from_tid, int to, int sid, const char *message);
 bool client_in_protected_mode(int cid); 
+bool send_to_hole_device(int from_gid, int from_tid, int to, int sid, const char *message);
 
 #endif /* _GAME_H */

@@ -425,7 +425,7 @@ void GameController::dealHole(Table *t)
 				SnapCardsHole, card1, card2);
 
 			//deal with sending the hold cards to the device
-			protected_snap(p->client_id, t->table_id, SnapCards, msg)
+			protected_snap(p->client_id, t->table_id, SnapCards, msg);
 
 		} else {
 			strcpy(card1, c1.getName());

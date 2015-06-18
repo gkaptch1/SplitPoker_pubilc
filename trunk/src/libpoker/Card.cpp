@@ -84,7 +84,7 @@ const char* Card::getName() const
 }
 
 //TODO make this an ecrypted commitment
-const char* Card::getName() const
+const char* Card::getProtectedName() const
 {
 	static char protected_card_name[3];
 	
