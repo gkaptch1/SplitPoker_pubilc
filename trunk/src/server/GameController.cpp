@@ -587,7 +587,8 @@ void GameController::stateBlinds(Table *t)
 		if (difftime(time(NULL), blind.last_blinds_time) > blind.blinds_time)
 		{
 			blind.last_blinds_time = time(NULL);
-			blind.amount = (int)(blind.blinds_factor * blind.amount);
+			//Edited to remove in increase in the blinds
+			blind.amount = (int)(1 * blind.amount);
 			
 			// send out blinds snapshot
 			snprintf(msg, sizeof(msg), "%d %d %d", SnapGameStateBlinds, blind.amount / 2, blind.amount);
