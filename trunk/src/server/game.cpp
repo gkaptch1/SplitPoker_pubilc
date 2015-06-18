@@ -1332,6 +1332,8 @@ int client_execute(clientcon *client, const char *cmd)
 	{
 		if (command == "PCLIENT")
 			return client_cmd_pclient(client, t);
+		else if (command == "PDEVICE")
+			return client_cmd_device(client, t);
 		else
 		{
 			// seems not to be a pclient
@@ -1339,8 +1341,6 @@ int client_execute(clientcon *client, const char *cmd)
 			return -1;
 		}
 	}
-	else if (command == "PDEVICE")
-		return client_cmd_device(client, t);
 	else if (command == "INFO")
 		return client_cmd_info(client, t);
 	else if (command == "CHAT")
@@ -1373,6 +1373,31 @@ int client_execute(clientcon *client, const char *cmd)
 int device_execute(devicecon *device, const char *cmd)
 {
 	//TODO put all the things that a device can send here.  Not sure what this needs to be stuffed with
+	/*
+	Tokenizer t(" ");
+	t.parse(cmd);  // parse the command line
+	
+	// ignore blank command
+	if (!t.count())
+		return 0;
+	
+	//dbg_msg("clientsock", "(%d) executing '%s'", client->sock, cmd);
+	
+	// FIXME: could be done better...
+	// extract message-id if present
+	const char firstchar = t[0][0];
+	if (firstchar >= '0' && firstchar <= '9')
+		client->last_msgid = t.getNextInt();
+	else
+		client->last_msgid = -1;
+	
+	
+	// get command argument
+	const string command = t.getNext();
+
+	if
+
+	*/
 }
 
 // returns zero if no cmd was found or no bytes remaining after exec
