@@ -665,7 +665,7 @@ QPointF WTable::calcDealerBtnPos(
 					offset);
 			break;
 		case 6: case 7:
-				pt.rx() += (wseats[nSeatID]->sceneBoundingRect().width() * 0.5f + offset);
+				pt.rx() += (wseats[nSeatID]->sceneBoundingRect().width() * 0.6f + offset);
 			break;
 	}
 
@@ -959,7 +959,8 @@ void WTable::updateSeat(unsigned int s)
 				strcpy(card2, allcards[1].getName());
 				
 				//For protected cards
-				if (protected_mode && 
+				// only if protected mode is on, we are considering our own seat, and it we always show the cards in the end game
+				if (protected_mode && snap->my_seat == (int)s &&
 					!(snap->state == Table::EndRound || snap->state == Table::Showdown) ) 
 						ui_seat->setCards("protected", "protected");
 				else 

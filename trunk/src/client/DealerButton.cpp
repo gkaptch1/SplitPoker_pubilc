@@ -100,7 +100,8 @@ void DealerButton::startAnimation(const QPointF& ptTraget)
 		return;
 
 	m_animDealerBtn.clear();
-	m_animDealerBtn.setPosAt(0, this->scenePos());
+	//Make the animation not do anything.  Just make the btn appear at the new location
+	m_animDealerBtn.setPosAt(0, ptTraget);
 	m_animDealerBtn.setPosAt(1, ptTraget);
 
 	m_tlDealerBtn.start();

@@ -418,15 +418,15 @@ void Seat::calcBetTextPos(qreal& x, qreal& y, int txt_width) const
 			break;
 			*/
 		case 1: case 2:
-				x = -.5 * sx_mini_card;//-sx_mini_card * 1.5;
-				y = - 1.15 * sy_mini_card; //0;
+				x = -sx_mini_card * 2.25;
+				y = .5 * sy_mini_card; //0;
 			break;
 		case 3: case 5:
 				x = .5 * sx_mini_card; //0;
 				y = -(sy_mini_card + 38); //-(sy_mini_card + 5);				
 			break;
 		case 4:
-				x = 1.75 * sx_mini_card; //0;
+				x = 2.75 * sx_mini_card; //0;
 				y = -(sy_mini_card + 35); //-(sy_mini_card + 5);
 			break;
 		case 8: case 9: case 0:
@@ -435,7 +435,7 @@ void Seat::calcBetTextPos(qreal& x, qreal& y, int txt_width) const
 			break;
 		case 6: case 7:
 				x = SeatImages::Instance().imgBack.width() + 2.75 * sx_mini_card; //SeatImages::Instance().imgBack.width() + sx_mini_card + 5;
-				y = sy_mini_card/3; //0;
+				y = sy_mini_card/3 + 20; //0;
 			break;
 	}
 }
