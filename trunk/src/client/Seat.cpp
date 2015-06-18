@@ -421,10 +421,14 @@ void Seat::calcBetTextPos(qreal& x, qreal& y, int txt_width) const
 				x = -sx_mini_card * 2.25;
 				y = .5 * sy_mini_card; //0;
 			break;
-		case 3: case 5:
+		case 3:
 				x = .5 * sx_mini_card; //0;
 				y = -(sy_mini_card + 38); //-(sy_mini_card + 5);				
 			break;
+		case 5:
+				x = 1.5 * sx_mini_card; //0;
+				y = -(sy_mini_card + 38); //-(sy_mini_card + 5);	
+		 	break;
 		case 4:
 				x = 2.75 * sx_mini_card; //0;
 				y = -(sy_mini_card + 35); //-(sy_mini_card + 5);

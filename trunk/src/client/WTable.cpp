@@ -553,7 +553,7 @@ QPointF WTable::calcSeatPos(unsigned int nSeatID) const
 		case 1:
 			return QPointF(rcTable.width() - rcSeat.width() * 0.75, rcTable.height() * 0.30);
 		case 2:
-			return QPointF(rcTable.width() - rcSeat.width() * 0.75, rcTable.height() * 0.65);
+			return QPointF(rcTable.width() - rcSeat.width() * 0.75, rcTable.height() * 0.60);
 		case 3:
 			return QPointF(rcTable.width() * 0.65, rcTable.height() - rcSeat.height());
 		case 4:
@@ -561,7 +561,7 @@ QPointF WTable::calcSeatPos(unsigned int nSeatID) const
 		case 5:
 			return QPointF(rcTable.width() * 0.35 - rcSeat.width(), rcTable.height() - rcSeat.height());
 		case 6:
-			return QPointF(-(rcSeat.width() * 0.25), rcTable.height() * 0.65);
+			return QPointF(-(rcSeat.width() * 0.25), rcTable.height() * 0.60);
 		case 7:
 			return QPointF(-(rcSeat.width() * 0.25), rcTable.height() * 0.30);
 		case 8:
@@ -658,11 +658,18 @@ QPointF WTable::calcDealerBtnPos(
 					m_pDealerButton->sceneBoundingRect().width() + 
 					offset);
 			break;
-		case 3: case 4: case 5:
+		case 3: case 4:
 				pt.ry() -= (
 					wseats[nSeatID]->sceneBoundingRect().height() * 0.5f + 
 					m_pDealerButton->sceneBoundingRect().height() + 
 					offset);
+			break;
+	 	case 5:
+				pt.ry() -= (
+					wseats[nSeatID]->sceneBoundingRect().height() * 0.5f + 
+					m_pDealerButton->sceneBoundingRect().height() + 
+					offset);	
+				pt.rx() += m_pDealerButton->sceneBoundingRect().width();
 			break;
 		case 6: case 7:
 				pt.rx() += (wseats[nSeatID]->sceneBoundingRect().width() * 0.6f + offset);
