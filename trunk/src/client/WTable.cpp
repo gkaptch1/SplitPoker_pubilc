@@ -339,7 +339,7 @@ WTable::WTable(int gid, int tid, QWidget *parent)
 	connect(btnBack, SIGNAL(clicked()), this, SLOT(actionBack()));
 	
 	//Gabe Edited
-	QPushButton *btnSitout = new QPushButton(tr("Sit&Out"), this);
+	QPushButton *btnSitout = new QPushButton(tr("Sit &Out"), this);
 	btnSitout->setFixedWidth(actionbtn_width);
 	connect(btnSitout, SIGNAL(clicked()), this, SLOT(actionSitOut()));
 	
@@ -489,7 +489,7 @@ WTable::WTable(int gid, int tid, QWidget *parent)
 	shortcutBack = new QShortcut(tr("Ctrl+K"), this);
 	connect(shortcutBack, SIGNAL(activated()), this, SLOT(actionBack()));
 
-	shortcutBack = new QShortcut(tr("Ctrl+P"), this);
+	shortcutProtect = new QShortcut(tr("Ctrl+P"), this);
 	connect(shortcutBack, SIGNAL(activated()), this, SLOT(actionProtectedMode()));
 	
 	// assign shortcut for making screenshot
