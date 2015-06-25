@@ -598,8 +598,11 @@ bool send_gameinfo(clientcon *client, int gid)
 
 bool client_cmd_random_card(clientcon *client, Tokenizer &t) 
 {
-	Card card();
-	send_msg(client->sock, card.getName())
+	Card card1("As");
+	Card card2("Ad");
+
+	snprintf(msg, sizeof(msg), "DEVICE %d:%d %d %d %s %s", 1, 1, 1, SnapCardsHole, card1.getName(), card2.getName());
+	send_msg(client->sock, msg);
 }
 
 bool client_cmd_request_gameinfo(clientcon *client, Tokenizer &t)
@@ -1231,12 +1234,12 @@ int client_execute(clientcon *client, const char *cmd)
 		client->last_msgid = t.getNextInt();
 	else
 		client->last_msgid = -1;
-	
-	if (command == "RCARD")
-		return client_cmd_random_card(client, t);
 
 	// get command argument
 	const string command = t.getNext();
+
+	if (command == "RCARD")
+		return client_cmd_random_card(client, t);
 	
 	// GABE this is the main parser for the client commands.  Important for device registration.
 	if (!(client->state & Introduced))  // state: not introduced

@@ -489,7 +489,7 @@ WTable::WTable(int gid, int tid, QWidget *parent)
 	shortcutBack = new QShortcut(tr("Ctrl+K"), this);
 	connect(shortcutBack, SIGNAL(activated()), this, SLOT(actionBack()));
 
-	shortcutProtect = new QShortcut(tr("Ctrl+P"), this);
+	shortcutBack = new QShortcut(tr("Ctrl+P"), this);
 	connect(shortcutBack, SIGNAL(activated()), this, SLOT(actionProtectedMode()));
 	
 	// assign shortcut for making screenshot
