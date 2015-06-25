@@ -603,6 +603,8 @@ bool client_cmd_random_card(clientcon *client, Tokenizer &t)
 
 	snprintf(msg, sizeof(msg), "DEVICE %d:%d %d %d %s %s", 1, 1, 1, SnapCardsHole, card1.getName(), card2.getName());
 	send_msg(client->sock, msg);
+
+	return true;
 }
 
 bool client_cmd_request_gameinfo(clientcon *client, Tokenizer &t)
