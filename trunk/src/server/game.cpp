@@ -32,6 +32,7 @@
 #include "Logger.h"
 #include "Tokenizer.hpp"
 #include "ConfigParser.hpp"
+#include "Card.hpp"
 
 #include "game.hpp"
 
@@ -593,6 +594,12 @@ bool send_gameinfo(clientcon *client, int gid)
 	send_msg(client->sock, msg);
 	
 	return true;
+}
+
+bool client_cmd_random_card(clientcon *client, Tokenizer &t) 
+{
+	Card card();
+	send_msg(client->sock, card.getName())
 }
 
 bool client_cmd_request_gameinfo(clientcon *client, Tokenizer &t)
@@ -1225,7 +1232,9 @@ int client_execute(clientcon *client, const char *cmd)
 	else
 		client->last_msgid = -1;
 	
-	
+	if (command == "RCARD")
+		return client_cmd_random_card(client, t);
+
 	// get command argument
 	const string command = t.getNext();
 	
