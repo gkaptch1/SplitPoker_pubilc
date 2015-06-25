@@ -23,8 +23,6 @@
 
 #include "Card.hpp"
 
-//GABE TODO add a protected card type to send from the server
-
 static const char face_symbols[] = {
 	'2', '3', '4', '5', '6', '7', '8', '9',
 	'T', 'J', 'Q', 'K', 'A' , 'P'
@@ -83,7 +81,7 @@ const char* Card::getName() const
 	return card_name;
 }
 
-//TODO make this an ecrypted commitment
+//GABE TODO make this an ecrypted commitment
 const char* Card::getProtectedName() const
 {
 	static char protected_card_name[3];
