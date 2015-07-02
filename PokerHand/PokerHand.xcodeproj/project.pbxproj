@@ -65,7 +65,7 @@
 		C6CB2BA81B4529DA00AEB612 /* Td.png in Resources */ = {isa = PBXBuildFile; fileRef = C6CB2B701B4529DA00AEB612 /* Td.png */; };
 		C6CB2BA91B4529DA00AEB612 /* Th.png in Resources */ = {isa = PBXBuildFile; fileRef = C6CB2B711B4529DA00AEB612 /* Th.png */; };
 		C6CB2BAA1B4529DA00AEB612 /* Ts.png in Resources */ = {isa = PBXBuildFile; fileRef = C6CB2B721B4529DA00AEB612 /* Ts.png */; };
-		C6E8B4301B45B402004D378B /* TCPIPSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E8B42F1B45B402004D378B /* TCPIPSocket.swift */; };
+		C6E8B44C1B45EE76004D378B /* TCPIPSocket.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6E8B44B1B45EE76004D378B /* TCPIPSocket.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -141,7 +141,7 @@
 		C6CB2B701B4529DA00AEB612 /* Td.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Td.png; sourceTree = "<group>"; };
 		C6CB2B711B4529DA00AEB612 /* Th.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Th.png; sourceTree = "<group>"; };
 		C6CB2B721B4529DA00AEB612 /* Ts.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Ts.png; sourceTree = "<group>"; };
-		C6E8B42F1B45B402004D378B /* TCPIPSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TCPIPSocket.swift; sourceTree = "<group>"; };
+		C6E8B44B1B45EE76004D378B /* TCPIPSocket.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TCPIPSocket.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -165,7 +165,7 @@
 		C6CB2A6B1B451E2200AEB612 = {
 			isa = PBXGroup;
 			children = (
-				C6E8B42F1B45B402004D378B /* TCPIPSocket.swift */,
+				C6E8B44B1B45EE76004D378B /* TCPIPSocket.swift */,
 				C6CB2A761B451E2200AEB612 /* PokerHand */,
 				C6CB2A8C1B451E2200AEB612 /* PokerHandTests */,
 				C6CB2A751B451E2200AEB612 /* Products */,
@@ -433,7 +433,7 @@
 			files = (
 				C6CB2A7C1B451E2200AEB612 /* ViewController.swift in Sources */,
 				C6CB2A7A1B451E2200AEB612 /* AppDelegate.swift in Sources */,
-				C6E8B4301B45B402004D378B /* TCPIPSocket.swift in Sources */,
+				C6E8B44C1B45EE76004D378B /* TCPIPSocket.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

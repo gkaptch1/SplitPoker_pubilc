@@ -14,8 +14,10 @@ import Foundation
 class ViewController: UIViewController {
 
     // Create a socket to virtual machine on port 40888.
-    //let socket = SocketIOClient(socketURL: "128.220.247.211:40888")
     let sock = TCPIPSocket()
+    
+    // Something for this variable.
+    var w = false
     
     // Left card in View.
     @IBOutlet weak var leftCard: UIImageView!
@@ -47,10 +49,25 @@ class ViewController: UIViewController {
         // Use NSFileHandle for writing data.
         let fHandle = NSFileHandle(fileDescriptor: self.sock.socketDescriptor)
         
-        fHandle.writeData(("RCARD" as NSString).dataUsingEncoding(NSUTF8StringEncoding)!)
-        let dataFromServer = fHandle.readDataToEndOfFile()
+        // Synchronous.
+        //fHandle.writeData(("RCARD" as NSString).dataUsingEncoding(NSUTF8StringEncoding)!)
+        //let dataFromServer = fHandle.readDataToEndOfFile()
+        //println(NSString(data: dataFromServer, encoding: NSUTF8StringEncoding)!)
         
-        println(NSString(data: dataFromServer, encoding: NSUTF8StringEncoding)!)
+        
+        // Asyncrhonous.
+        fHandle.writeabilityHandler = { (f: NSFileHandle!) -> () in
+            if self.w == false {
+                self.w =  true
+                fHandle.writeData(("RCARD" as NSString).dataUsingEncoding(NSUTF8StringEncoding)!)
+            }
+        }
+        
+        fHandle.readabilityHandler = { (f: NSFileHandle!) -> () in
+            let s = NSString(data: fHandle.availableData, encoding: NSUTF8StringEncoding)!
+            println(s)
+        }
+    
     }
     
     override func didReceiveMemoryWarning() {
