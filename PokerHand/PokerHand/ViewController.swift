@@ -14,8 +14,9 @@ import Foundation
 class ViewController: UIViewController {
 
     // Create a socket to virtual machine on port 40888.
-    let socket = SocketIOClient(socketURL: "128.220.247.211:40888")
-
+    //let socket = SocketIOClient(socketURL: "128.220.247.211:40888")
+    let sock = TCPIPSocket()
+    
     // Left card in View.
     @IBOutlet weak var leftCard: UIImageView!
     
@@ -26,20 +27,8 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
 
-        // Add all socket handlers here.
-        self.addHandlers()
-
-        // Send the string RCARD to the dumb server.
-        self.socket.connect()
-    }
-
-    // Add handlers for any type of socket event.
-    func addHandlers() {
-        // Handler called on any socket event.
-        self.socket.onAny {println(
-            "Got event: \($0.event), with items: \($0.items)")
-        }
-        self.socket.on("connection"
+        // TCP connection to the poker server.
+        self.sock.connect(TCPIPSocketAddress(128, 220, 247, 211), 40888)
     }
 
     // Take the server response and parse it to set the card image.
@@ -52,15 +41,17 @@ class ViewController: UIViewController {
         self.rghtCard.image = UIImage(named: "Ad")
     }
     
-    
+    // UI button press.
     @IBAction func getCardsPressed(sender: AnyObject) {
-        //let data = "RCARD".dataUsingEncoding(NSUTF8StringEncoding, allowLossyConversion: false)!
-        //socket.emit("GetCards", data)
+        // Send the RCARD message to poker server.
+        // Use NSFileHandle for writing data.
+        let fHandle = NSFileHandle(fileDescriptor: self.sock.socketDescriptor)
         
-        // Send the RCARD message to
-        socket.emit("GetCards", "RCARD")
+        fHandle.writeData(("RCARD" as NSString).dataUsingEncoding(NSUTF8StringEncoding)!)
+        let dataFromServer = fHandle.readDataToEndOfFile()
+        
+        println(NSString(data: dataFromServer, encoding: NSUTF8StringEncoding)!)
     }
-    
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
