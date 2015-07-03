@@ -598,10 +598,12 @@ bool send_gameinfo(clientcon *client, int gid)
 
 bool client_cmd_random_card(clientcon *client, Tokenizer &t) 
 {
-	Card card1("As");
-	Card card2("Ad");
+	//Card card1("Ks");
+	//Card card2("Ad");
 
-	snprintf(msg, sizeof(msg), "DEVICE %d:%d %d %d %s %s", 1, 1, 1, SnapCardsHole, card1.getName(), card2.getName());
+	// TODO: Bug only sends Ad.
+	//snprintf(msg, sizeof(msg), "DEVICE %d:%d %d %d %s %s", 1, 1, 1, SnapCardsHole, card1.getName(), card2.getName());
+	snprintf(msg, sizeof(msg), "DEVICE %d:%d %d %d %s %s", 1, 1, 1, SnapCardsHole, "As", "Kd");
 	send_msg(client->sock, msg);
 
 	return true;
@@ -1240,6 +1242,10 @@ int client_execute(clientcon *client, const char *cmd)
 	// get command argument
 	const string command = t.getNext();
 
+	// Print command received. 
+	const char * c = command.c_str();
+	printf("\ncommand: %s\n", c);
+
 	if (command == "RCARD")
 		return client_cmd_random_card(client, t);
 	
@@ -1288,7 +1294,8 @@ int client_execute(clientcon *client, const char *cmd)
 int client_parsebuffer(clientcon *client)
 {
 	//log_msg("clientsock", "(%d) parse (bufferlen=%d)", client->sock, client->buflen);
-	
+	printf("\nClient msgbuf: %s %d\n", client->msgbuf, client->buflen);	
+
 	int found_nl = -1;
 	for (int i=0; i < client->buflen; i++)
 	{
