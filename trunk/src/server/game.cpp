@@ -383,6 +383,8 @@ bool client_remove_without_teardown(socktype sock)
 {
 	//This is used to reassign a known socket connectioin from clientcon to devicecon
 	//TODO implement
+
+	return true;
 }
 
 int client_cmd_pclient(clientcon *client, Tokenizer &t)
