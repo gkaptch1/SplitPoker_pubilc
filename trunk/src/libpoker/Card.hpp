@@ -41,9 +41,10 @@ public:
 		Queen,
 		King,
 		Ace,
+		Protected,
 		
 		FirstFace=Two,
-		LastFace=Ace
+		LastFace=Protected
 	} Face;
 	
 	typedef enum {
@@ -51,9 +52,10 @@ public:
 		Diamonds,
 		Hearts,
 		Spades,
+		ProtectedSuit,
 		
 		FirstSuit=Clubs,
-		LastSuit=Spades
+		LastSuit=Protected
 	} Suit;
 	
 	Card();
@@ -67,6 +69,7 @@ public:
 	char getFaceSymbol() const;
 	char getSuitSymbol() const;
 	const char* getName() const;
+	const char* getProtectedName() const;
 	
 	bool operator <  (const Card &c) const { return (getFace() < c.getFace()); };
 	bool operator >  (const Card &c) const { return (getFace() > c.getFace()); };

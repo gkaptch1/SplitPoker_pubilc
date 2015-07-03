@@ -48,6 +48,7 @@ static char msg[MSG_BUFFER_SIZE];
 static games_type games;
 static unsigned int gid_counter = 0;
 
+//Vector container for all the connected clients
 static clients_type clients;
 static unsigned int cid_counter = 0;
 
@@ -80,6 +81,16 @@ clientcon* get_client_by_sock(socktype sock)
 	return NULL;
 }
 
+devicecon* get_device_by_sock(socktype sock)
+{
+	for (unsigned int i=0; i < clients.size(); i++) {
+		if (clients[i].device_connected && clients[i].device.sock == sock)
+			return &(clients[i].device);
+	}
+
+	return NULL;
+}
+
 clientcon* get_client_by_id(int cid)
 {
 	for (unsigned int i=0; i < clients.size(); i++)
@@ -87,6 +98,22 @@ clientcon* get_client_by_id(int cid)
 			return &(clients[i]);
 	
 	return NULL;
+}
+
+clientcon* get_client_by_uuid(string uuid)
+{
+	for (unsigned int i=0; i < clients.size(); i++)
+		if (clients[i].uuid == uuid)
+			return &(clients[i]);
+	
+	return NULL;
+}
+
+bool client_in_protected_mode(int cid) 
+{
+	clientcon *con = get_client_by_id(cid);
+	if (!con) return false;
+	return con->device_connected;
 }
 
 int send_msg(socktype sock, const char *message)
@@ -215,6 +242,17 @@ bool table_chat(int from_cid, int to_gid, int to_tid, const char *message)
 	return true;
 }
 
+bool send_to_hole_device(int from_gid, int from_tid, int to, int sid, const char *message)
+{
+	char buf[MSG_BUFFER_SIZE];
+	snprintf(buf, sizeof(buf), "DEVICE %d:%d %d %s",
+				from_gid, from_tid, sid, message);
+	clientcon* toclient = get_client_by_id(to);
+	if (toclient && toclient->device_connected)
+		send_msg((toclient->device).sock, buf);
+	return true;
+}
+
 bool client_snapshot(int from_gid, int from_tid, int to, int sid, const char *message)
 {
 	char buf[MSG_BUFFER_SIZE];
@@ -229,7 +267,6 @@ bool client_snapshot(int from_gid, int from_tid, int to, int sid, const char *me
 }
 
 //GABE Probably have to add a new send_to_hole_device type function
-
 bool client_snapshot(int to, int sid, const char *message)
 {
 	if (to == -1)  // to all
@@ -342,6 +379,12 @@ bool client_remove(socktype sock)
 	return true;
 }
 
+bool client_remove_without_teardown(socktype sock)
+{
+	//This is used to reassign a known socket connectioin from clientcon to devicecon
+	//TODO implement
+}
+
 int client_cmd_pclient(clientcon *client, Tokenizer &t)
 {
 	unsigned int version = t.getNextInt();
@@ -409,6 +452,61 @@ int client_cmd_pclient(clientcon *client, Tokenizer &t)
 		send_msg(client->sock, msg);
 	}
 	
+	return 0;
+}
+
+// When something connects to the server, it connects as a client.  Once it announces itself as
+// a device, we attempt to register it as a device instead
+int client_cmd_device(clientcon *device, Tokenizer &t) 
+{
+	//We still enforce the versioning in the same way that we treat a normal client
+	unsigned int version = t.getNextInt();
+	// uuid used to match the device with the proper client
+	string uuid = t.getNext();
+
+	if (version < VERSION_COMPAT)
+	{
+		log_msg("device", "device %d version (%d) too old", device->sock, version);
+		send_err(device, ErrWrongVersion, "The device version is too old."
+			"Please update your HoldingNuts device to a more recent version.");
+		client_remove(device->sock);
+	}
+	else
+	{
+
+		// ack the device
+		send_ok(device);
+
+		//see if there is a client with the same uuid as the device that is registering
+		clientcon *conc = get_client_by_uuid(uuid);
+		if(!conc)
+		{
+			//There is no client connected with that uuid.  We reject the connection from the device.
+			log_msg("device", "device %d connecting with unknown uuid.  Rejecting connection", device->sock);
+			send_err(device, ErrUnknownUuid, "The device uuid is not associated with any connected client."
+				"Please check that the uuid of your device and client match");
+			//remove it from the list of known clients and make it reconnect
+			client_remove(device->sock);
+		}
+		//conc is non null, so we add the devicecon to the client
+
+		//generate a new device to hand to the proper client
+		devicecon new_device;
+		memset(&new_device, 0, sizeof(new_device));
+		new_device.sock = device->sock;
+		new_device.saddr = device->saddr;
+		new_device.version = version;
+
+
+		//remove the record of the device from the client list.
+		client_remove_without_teardown(device->sock);
+
+		//Attaching the new device to the client it is associated with
+		conc->device = new_device;
+		conc->device_connected = true;
+	}
+
+
 	return 0;
 }
 
@@ -1254,6 +1352,8 @@ int client_execute(clientcon *client, const char *cmd)
 	{
 		if (command == "PCLIENT")
 			return client_cmd_pclient(client, t);
+		else if (command == "PDEVICE")
+			return client_cmd_device(client, t);
 		else
 		{
 			// seems not to be a pclient
@@ -1288,6 +1388,36 @@ int client_execute(clientcon *client, const char *cmd)
 		send_err(client, ErrNotImplemented, "not implemented");
 	
 	return 0;
+}
+
+int device_execute(devicecon *device, const char *cmd)
+{
+	//TODO put all the things that a device can send here.  Not sure what this needs to be stuffed with
+	/*
+	Tokenizer t(" ");
+	t.parse(cmd);  // parse the command line
+	
+	// ignore blank command
+	if (!t.count())
+		return 0;
+	
+	//dbg_msg("clientsock", "(%d) executing '%s'", client->sock, cmd);
+	
+	// FIXME: could be done better...
+	// extract message-id if present
+	const char firstchar = t[0][0];
+	if (firstchar >= '0' && firstchar <= '9')
+		client->last_msgid = t.getNextInt();
+	else
+		client->last_msgid = -1;
+	
+	
+	// get command argument
+	const string command = t.getNext();
+
+	if
+
+	*/
 }
 
 // returns zero if no cmd was found or no bytes remaining after exec
@@ -1340,6 +1470,55 @@ int client_parsebuffer(clientcon *client)
 	return retval;
 }
 
+int device_parsebuffer(devicecon *device)
+{
+	//log_msg("clientsock", "(%d) parse (bufferlen=%d)", client->sock, client->buflen);
+	
+	int found_nl = -1;
+	for (int i=0; i < device->buflen; i++)
+	{
+		if (device->msgbuf[i] == '\r')
+			device->msgbuf[i] = ' ';  // space won't hurt
+		else if (device->msgbuf[i] == '\n')
+		{
+			found_nl = i;
+			break;
+		}
+	}
+	
+	int retval = 0;
+	
+	// is there a command in queue?
+	if (found_nl != -1)
+	{
+		// extract command
+		char cmd[sizeof(device->msgbuf)];
+		memcpy(cmd, device->msgbuf, found_nl);
+		cmd[found_nl] = '\0';
+		
+		//log_msg("clientsock", "(%d) command: '%s' (len=%d)", client->sock, cmd, found_nl);
+		if (device_execute(device, cmd) != -1)  // client quitted ?
+		{
+			// move the rest to front
+			memmove(device->msgbuf, device->msgbuf + found_nl + 1, device->buflen - (found_nl + 1));
+			device->buflen -= found_nl + 1;
+			//log_msg("clientsock", "(%d) new buffer after cmd (bufferlen=%d)", client->sock, client->buflen);
+			
+			retval = device->buflen;
+		}
+		else
+		{
+			//TODO figure out what to do here
+			//client_remove(client->sock);
+			retval = 0;
+		}
+	}
+	else
+		retval = 0;
+	
+	return retval;
+}
+
 int client_handle(socktype sock)
 {
 	char buf[1024];
@@ -1353,24 +1532,42 @@ int client_handle(socktype sock)
 	//log_msg("clientsock", "(%d) DATA len=%d", sock, bytes);
 	
 	clientcon *client = get_client_by_sock(sock);
-	if (!client)
+	devicecon *device = get_device_by_sock(sock);
+	if (!client && !device)
 	{
-		log_msg("clientsock", "(%d) error: no client associated", sock);
+		log_msg("clientsock", "(%d) error: no client or device associated", sock);
 		return -1;
 	}
 	
-	if (client->buflen + bytes > (int)sizeof(client->msgbuf))
-	{
-		log_msg("clientsock", "(%d) error: buffer size exceeded", sock);
-		client->buflen = 0;
+	if (client) {
+		if (client->buflen + bytes > (int)sizeof(client->msgbuf))
+		{
+			log_msg("clientsock", "(%d) error: buffer size exceeded", sock);
+			client->buflen = 0;
+		}
+		else
+		{
+			memcpy(client->msgbuf + client->buflen, buf, bytes);
+			client->buflen += bytes;
+			
+			// parse and execute all commands in queue
+			while (client_parsebuffer(client));
+		}
 	}
-	else
-	{
-		memcpy(client->msgbuf + client->buflen, buf, bytes);
-		client->buflen += bytes;
-		
-		// parse and execute all commands in queue
-		while (client_parsebuffer(client));
+	else if (device) {
+		if (device->buflen + bytes > (int)sizeof(device->msgbuf))
+		{
+			log_msg("devicesock", "(%d) error: buffer size exceeded", sock);
+			device->buflen = 0;
+		}
+		else
+		{
+			memcpy(device->msgbuf + device->buflen, buf, bytes);
+			device->buflen += bytes;
+			
+			// parse and execute all commands in queue
+			while (device_parsebuffer(device));
+		}
 	}
 	
 	return bytes;
