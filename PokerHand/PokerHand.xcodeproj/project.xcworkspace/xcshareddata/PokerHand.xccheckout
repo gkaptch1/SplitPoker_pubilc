@@ -24,9 +24,9 @@
 		<key>2C30AA9D205FCF37A39935814E24588AA45EE241</key>
 		<string>../../..</string>
 		<key>9BE9D417DFF2C108330E2C3DFD9D454205A39188</key>
-		<string>../../../../../../../../tmp/SwiftSocket</string>
+		<string>../../../../tmp/SwiftSocket</string>
 		<key>BB5666AE88179C3F6A6E8C5937EC83BE83C6C9E9</key>
-		<string>../../../../../../../../tmp/TCPIPSocket.Swift</string>
+		<string>../../../../tmp/TCPIPSocket.Swift</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
 	<string>https://bitbucket.org/gkaptchuk/hn_poker_mod.git</string>

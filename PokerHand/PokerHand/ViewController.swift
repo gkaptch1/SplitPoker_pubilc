@@ -52,6 +52,24 @@ class ViewController: UIViewController {
             println(errmsg)
         }
     }
+    
+    @IBAction func getRegisterDevice(sender: AnyObject) {
+        //Send a message to the server that inc
+        // PROTOCOL: PDEVICE <VERSION> <UUID>
+        var(success, errmsg) = self.client.send(str:"PDEVICE 5 f154c24f-4c72-4ad2-a6a3-3ee015666cfc\n")
+        
+        if success {
+            // Get response from poker server.
+            var data = client.read(1024*10)
+            if let d = data {
+                var srvResp = String(bytes: d, encoding: NSUTF8StringEncoding)
+                println("Server response: \(srvResp)")
+            }
+        } else {
+            println(errmsg);
+        }
+        
+    }
 
     // Take the server response and parse it to set the card image.
     func parseServerResponse(srvRsp: String) {
