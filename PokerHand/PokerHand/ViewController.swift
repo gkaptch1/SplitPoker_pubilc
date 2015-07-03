@@ -45,7 +45,7 @@ class ViewController: UIViewController {
             var data = client.read(1024*10)
             if let d = data {
                 var srvResp = String(bytes: d, encoding: NSUTF8StringEncoding)
-                println("Server response: \(srvResp)")
+                println("Server response from Get Cards: \(srvResp)")
                 parseServerResponse(srvResp!)
             }
         } else {
@@ -63,7 +63,7 @@ class ViewController: UIViewController {
             var data = client.read(1024*10)
             if let d = data {
                 var srvResp = String(bytes: d, encoding: NSUTF8StringEncoding)
-                println("Server response: \(srvResp)")
+                println("Server response from Register: \(srvResp)")
             }
         } else {
             println(errmsg);
