@@ -1420,6 +1420,8 @@ int device_execute(devicecon *device, const char *cmd)
 	if
 
 	*/
+
+	return 0;
 }
 
 // returns zero if no cmd was found or no bytes remaining after exec
