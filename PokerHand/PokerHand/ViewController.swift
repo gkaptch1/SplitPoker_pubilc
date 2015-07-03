@@ -14,11 +14,8 @@ import Foundation
 class ViewController: UIViewController {
 
     // Create a socket to virtual machine on port 40888.
-    let sock = TCPIPSocket()
-    
-    // Something for this variable.
-    var w = false
-    
+    let client:TCPClient = TCPClient(addr: "128.220.247.211", port: 40888)
+
     // Left card in View.
     @IBOutlet weak var leftCard: UIImageView!
     
@@ -30,13 +27,37 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
 
         // TCP connection to the poker server.
-        self.sock.connect(TCPIPSocketAddress(128, 220, 247, 211), 40888)
+        var(success, errmsg) = self.client.connect(timeout: 10)
+        
+        if !success {
+            println(errmsg)
+        }
+    }
+    
+    // UI button press.
+    @IBAction func getCardsPressed(sender: AnyObject) {
+        // Send the RCARD message to poker server.
+        // Use NSFileHandle for writing data.
+        var(success, errmsg) = self.client.send(str:"RCARD\n")
+        
+        if success {
+            // Get response from poker server.
+            var data = client.read(1024*10)
+            if let d = data {
+                var srvResp = String(bytes: d, encoding: NSUTF8StringEncoding)
+                println("Server response: \(srvResp)")
+                parseServerResponse(srvResp!)
+            }
+        } else {
+            println(errmsg)
+        }
     }
 
     // Take the server response and parse it to set the card image.
     func parseServerResponse(srvRsp: String) {
-
+        
         // Parse the server response string into an array.
+        let srvRsp = srvRsp.stringByReplacingOccurrencesOfString("\r\n", withString: "")
         var srvRspArray = split(srvRsp) {$0 == " "}
         var device: String = srvRspArray[0]
         var table: String = srvRspArray[1] + srvRspArray[2]
@@ -44,39 +65,13 @@ class ViewController: UIViewController {
         var strLCard: String = srvRspArray[4]
         var strRCard: String = srvRspArray[5]
         
+        //println("\(device) \(table) \(hole_cards) \(strLCard) \(strRCard)")
+        
         // Set the left card image.
         self.leftCard.image = UIImage(named: strLCard)
         
         // Set the right card image.
         self.rghtCard.image = UIImage(named: strRCard)
-    }
-    
-    // UI button press.
-    @IBAction func getCardsPressed(sender: AnyObject) {
-        // Send the RCARD message to poker server.
-        // Use NSFileHandle for writing data.
-        let fHandle = NSFileHandle(fileDescriptor: self.sock.socketDescriptor)
-        
-        // Synchronous.
-        //fHandle.writeData(("RCARD" as NSString).dataUsingEncoding(NSUTF8StringEncoding)!)
-        //let dataFromServer = fHandle.readDataToEndOfFile()
-        //println(NSString(data: dataFromServer, encoding: NSUTF8StringEncoding)!)
-        
-        
-        // Asyncrhonous.
-        fHandle.writeabilityHandler = { (f: NSFileHandle!) -> () in
-            if self.w == false {
-                self.w =  true
-                fHandle.writeData(("RCARD\n" as NSString).dataUsingEncoding(NSUTF8StringEncoding)!)
-            }
-        }
-        
-        fHandle.readabilityHandler = { (f: NSFileHandle!) -> () in
-            let srvRsp = NSString(data: fHandle.availableData, encoding: NSUTF8StringEncoding)!
-            println("Server response: \(srvRsp)")
-            self.parseServerResponse(srvRsp as String)
-        }
-    
     }
     
     override func didReceiveMemoryWarning() {
