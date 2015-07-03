@@ -34,13 +34,21 @@ class ViewController: UIViewController {
     }
 
     // Take the server response and parse it to set the card image.
-    func parseServerResponse() {
+    func parseServerResponse(srvRsp: String) {
 
+        // Parse the server response string into an array.
+        var srvRspArray = split(srvRsp) {$0 == " "}
+        var device: String = srvRspArray[0]
+        var table: String = srvRspArray[1] + srvRspArray[2]
+        var hole_cards: Int = srvRspArray[3].toInt()!
+        var strLCard: String = srvRspArray[4]
+        var strRCard: String = srvRspArray[5]
+        
         // Set the left card image.
-        self.leftCard.image = UIImage(named: "Ad")
+        self.leftCard.image = UIImage(named: strLCard)
         
         // Set the right card image.
-        self.rghtCard.image = UIImage(named: "Ad")
+        self.rghtCard.image = UIImage(named: strRCard)
     }
     
     // UI button press.
@@ -59,13 +67,14 @@ class ViewController: UIViewController {
         fHandle.writeabilityHandler = { (f: NSFileHandle!) -> () in
             if self.w == false {
                 self.w =  true
-                fHandle.writeData(("RCARD" as NSString).dataUsingEncoding(NSUTF8StringEncoding)!)
+                fHandle.writeData(("RCARD\n" as NSString).dataUsingEncoding(NSUTF8StringEncoding)!)
             }
         }
         
         fHandle.readabilityHandler = { (f: NSFileHandle!) -> () in
-            let s = NSString(data: fHandle.availableData, encoding: NSUTF8StringEncoding)!
-            println(s)
+            let srvRsp = NSString(data: fHandle.availableData, encoding: NSUTF8StringEncoding)!
+            println("Server response: \(srvRsp)")
+            self.parseServerResponse(srvRsp as String)
         }
     
     }
