@@ -55,7 +55,7 @@ public:
 		ProtectedSuit,
 		
 		FirstSuit=Clubs,
-		LastSuit=Protected
+		LastSuit=ProtectedSuit
 	} Suit;
 	
 	Card();

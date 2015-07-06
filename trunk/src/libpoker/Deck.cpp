@@ -33,8 +33,8 @@ void Deck::fill()
 {
 	cards.clear();
 	
-	for (int f=Card::FirstFace; f <= Card::LastFace; f++)
-		for (int s=Card::FirstSuit; s <= Card::LastSuit; s++)
+	for (int f=Card::FirstFace; f <= Card::LastFace-1; f++)
+		for (int s=Card::FirstSuit; s <= Card::LastSuit-1; s++)
 		{
 			Card c((Card::Face)f, (Card::Suit)s);
 			push(c);
@@ -63,6 +63,8 @@ bool Deck::pop(Card &card)
 		return false;
 	
 	card = cards.back();
+	//printf("Poping the card %s from the deck\n", card.getName());
+
 	cards.pop_back();
 	return true;
 }

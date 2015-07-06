@@ -423,7 +423,6 @@ void GameController::dealHole(Table *t)
 			snprintf(msg, sizeof(msg), "%d %s %s",
 				SnapCardsHole, card1, card2);
 
-			printf("%s \n", msg);
 			//deal with sending the hold cards to the device
 			protected_snap(p->client_id, t->table_id, SnapCards, msg);
 
@@ -442,7 +441,6 @@ void GameController::dealHole(Table *t)
 				SnapCardsHole, card1, card2);
 		}
 		//We send out hole information to all clients.  If its protected, the card information itself will be protected.
-		printf("%s \n", msg);
 		snap(p->client_id, t->table_id, SnapCards, msg);
 		
 		
