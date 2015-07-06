@@ -419,11 +419,15 @@ void GameController::dealHole(Table *t)
 		char card1[3], card2[3];
 
 		if(client_in_protected_mode(p->client_id)) {
-			//Send the real snap to the hole device
+			//Pull the names of the new cards into the char buffers
+			strcpy(card1, c1.getName());
+			strcpy(card2, c2.getName());
+
+			//Generate the string to send to the device
 			snprintf(msg, sizeof(msg), "%d %s %s",
 				SnapCardsHole, card1, card2);
 
-			//deal with sending the hold cards to the device
+			//Send off the hole cards to the protected device
 			protected_snap(p->client_id, t->table_id, SnapCards, msg);
 
 			//Write over the cards with PP, so the client doesnt get an information
