@@ -10,11 +10,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "PokerHand/ViewController.swift"
-            timestampString = "457637695.911686"
+            timestampString = "457888368.869104"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "68"
-            endingLineNumber = "68"
+            startingLineNumber = "79"
+            endingLineNumber = "79"
             landmarkName = "getRegisterDevice(_:)"
             landmarkType = "5">
          </BreakpointContent>

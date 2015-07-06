@@ -65,6 +65,17 @@ class ViewController: UIViewController {
                 var srvResp = String(bytes: d, encoding: NSUTF8StringEncoding)
                 println("Server response from Register: \(srvResp)")
             }
+            
+                //Set up a blocking listen call that goes on forever.
+            while true {
+                data = client.read(1024*10)
+                if let d = data {
+                    var srvResp = String(bytes: d, encoding: NSUTF8StringEncoding)
+                    println("Server response from Continual Listen: \(srvResp)")
+                }
+            }
+            
+            
         } else {
             println(errmsg);
         }

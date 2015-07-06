@@ -1656,6 +1656,8 @@ QString WTable::buildSuitString(const Card& card)
 		case Card::Hearts:	scard = tr("Hearts");	break;
 		case Card::Diamonds:	scard = tr("Diamonds");	break;
 		case Card::Clubs:	scard = tr("Clubs");	break;
+		case Card::ProtectedSuit:	scard = tr("Protected");	break;
+
 	}
 	
 	return scard;
@@ -1680,6 +1682,7 @@ QString WTable::buildFaceString(const Card& card, bool plural)
 		case Card::Queen:	scard = !plural ? tr("Queen") :	tr("Queens");	break;
 		case Card::King:	scard = !plural ? tr("King") :	tr("Kings");	break;
 		case Card::Ace:		scard = !plural ? tr("Ace") :	tr("Aces");	break;
+		case Card::Protected:	scard = !plural ? tr("Protected") : tr("Protected"); break;
 	}
 	
 	return scard;
