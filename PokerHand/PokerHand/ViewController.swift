@@ -46,7 +46,8 @@ class ViewController: UIViewController {
             if let d = data {
                 var srvResp = String(bytes: d, encoding: NSUTF8StringEncoding)
                 println("Server response from Get Cards: \(srvResp)")
-                parseServerResponse(srvResp!)
+                let cards = parseServerResponse(srvResp!)
+                updateCardImages(cards.lCard, strRCard: cards.rCard)
             }
         } else {
             println(errmsg)
@@ -66,15 +67,23 @@ class ViewController: UIViewController {
                 println("Server response from Register: \(srvResp)")
             }
             
-                //Set up a blocking listen call that goes on forever.
-            while true {
-                data = client.read(1024*10)
-                if let d = data {
-                    var srvResp = String(bytes: d, encoding: NSUTF8StringEncoding)
-                    println("Server response from Continual Listen: \(srvResp)")
+            let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
+            dispatch_async(dispatch_get_global_queue(priority, 0)) {
+                while true {
+                    data = self.client.read(1024*10)
+                    if let d = data {
+                        var srvResp = String(bytes: d, encoding: NSUTF8StringEncoding)
+                        println("Server response from Continual Listen: \(srvResp)")
+                        if (srvResp != nil) {
+                            let cards = self.parseServerResponse(srvResp!)
+                            //Do the UI update on the main thread
+                            dispatch_async(dispatch_get_main_queue()) {
+                                self.updateCardImages(cards.lCard, strRCard: cards.rCard)
+                            }
+                        }
+                    }
                 }
             }
-            
             
         } else {
             println(errmsg);
@@ -83,7 +92,7 @@ class ViewController: UIViewController {
     }
 
     // Take the server response and parse it to set the card image.
-    func parseServerResponse(srvRsp: String) {
+    func parseServerResponse(srvRsp: String) -> (lCard: String, rCard: String) {
         
         // Parse the server response string into an array.
         let srvRsp = srvRsp.stringByReplacingOccurrencesOfString("\r\n", withString: "")
@@ -96,6 +105,12 @@ class ViewController: UIViewController {
         
         //println("\(device) \(table) \(hole_cards) \(strLCard) \(strRCard)")
         
+        println("\(strLCard) and \(strRCard)")
+        
+        return (strLCard, strRCard)
+    }
+    
+    func updateCardImages(strLCard: String, strRCard: String) {
         // Set the left card image.
         self.leftCard.image = UIImage(named: strLCard)
         
