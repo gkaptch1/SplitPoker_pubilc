@@ -14,8 +14,17 @@ import Foundation
 class ViewController: UIViewController {
 
     // Create a socket to virtual machine on port 40888.
-    let client:TCPClient = TCPClient(addr: "128.220.247.211", port: 40888)
+    var client:TCPClient = TCPClient(addr: "128.220.247.211", port: 40888)
 
+    //Text Field representing server IP
+    @IBOutlet weak var serverIP: UITextField!
+    
+    //Text Field representing the client's unique user ID
+    @IBOutlet weak var clientUuid: UITextField!
+    
+    //Var representing the software version.  Dummy at this point
+    var version:String = "5"
+    
     // Left card in View.
     @IBOutlet weak var leftCard: UIImageView!
     
@@ -55,9 +64,26 @@ class ViewController: UIViewController {
     }
     
     @IBAction func getRegisterDevice(sender: AnyObject) {
+        // Update the tcp connection to make sure it is pointing at the desired server ( if the ip field is not empty
+        if (self.serverIP.text != "") {
+            self.client.close()
+            self.client = TCPClient(addr: "\(serverIP.text)", port: 40888)
+            self.client.connect(timeout: 10)
+        }
+        
+        
+        
         //Send a message to the server that inc
         // PROTOCOL: PDEVICE <VERSION> <UUID>
-        var(success, errmsg) = self.client.send(str:"PDEVICE 5 f154c24f-4c72-4ad2-a6a3-3ee015666cfc\n")
+        // Check if the uuid field is empty
+        var registrationMessage = ""
+        if ( self.clientUuid.text == "" ) {
+            registrationMessage = "PDEVICE \(version) f154c24f-4c72-4ad2-a6a3-3ee015666cfc\n"
+        } else {
+            registrationMessage = "PDEVICE \(version) \(self.clientUuid.text)\n"
+        }
+        
+        var(success, errmsg) = self.client.send(str:registrationMessage)
         
         if success {
             // Get response from poker server.
@@ -67,8 +93,10 @@ class ViewController: UIViewController {
                 println("Server response from Register: \(srvResp)")
             }
             
+            //Listen async for incoming messages from the server updating the cards displayed
             let priority = DISPATCH_QUEUE_PRIORITY_DEFAULT
             dispatch_async(dispatch_get_global_queue(priority, 0)) {
+                // Listen forever
                 while true {
                     data = self.client.read(1024*10)
                     if let d = data {

@@ -40,12 +40,24 @@
                                     <action selector="getRegisterDevice:" destination="BYZ-38-t0r" eventType="touchUpInside" id="l6T-u7-Svf"/>
                                 </connections>
                             </button>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Server IP" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="L9g-CI-LEi">
+                                <rect key="frame" x="16" y="545" width="165" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" fixedFrame="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Client UUID" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="mqA-sk-WBz">
+                                <rect key="frame" x="195" y="545" width="165" height="30"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits"/>
+                            </textField>
                         </subviews>
                         <color key="backgroundColor" red="0.0" green="0.50196081399917603" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     </view>
                     <connections>
+                        <outlet property="clientUuid" destination="mqA-sk-WBz" id="leH-N2-dbA"/>
                         <outlet property="leftCard" destination="ezl-PH-PEg" id="4pu-ty-UdD"/>
                         <outlet property="rghtCard" destination="aPC-jQ-rLW" id="gJC-V2-Ek9"/>
+                        <outlet property="serverIP" destination="L9g-CI-LEi" id="9QS-rt-n6r"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
