@@ -69,6 +69,9 @@ class ViewController: UIViewController {
             self.client.close()
             self.client = TCPClient(addr: "\(serverIP.text)", port: 40888)
             self.client.connect(timeout: 10)
+        } else {
+            self.client.close()
+            self.client.connect(timeout: 10)
         }
         
         
@@ -90,6 +93,13 @@ class ViewController: UIViewController {
             var data = client.read(1024*10)
             if let d = data {
                 var srvResp = String(bytes: d, encoding: NSUTF8StringEncoding)
+                if (srvResp?.hasPrefix("Optional(\"ERR 32\"") != nil) {
+                    let alert = UIAlertController(title: "Invalid UUID", message: "Please check that your computer client is connected your device has a matching UUID", preferredStyle: UIAlertControllerStyle.Alert)
+                    let alertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default) { (UIAlertAction) -> Void in }
+                    alert.addAction(alertAction)
+                    presentViewController(alert, animated: true) { () -> Void in }
+                    return
+                }
                 println("Server response from Register: \(srvResp)")
             }
             

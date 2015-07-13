@@ -382,7 +382,16 @@ bool client_remove(socktype sock)
 bool client_remove_without_teardown(socktype sock)
 {
 	//This is used to reassign a known socket connectioin from clientcon to devicecon
-	//TODO implement
+	
+	//itterate through all connected clients
+	for (clients_type::iterator e = clients.begin(); e != clients.end(); e++) {
+		clientcon *client = &(*e);
+		//if the sockets match, we remove the referance to the client - it is now a devicecon instead
+		if (client->sock == sock) { 
+			clients.erase(client);
+			break;
+		}
+	}
 
 	return true;
 }
@@ -476,9 +485,6 @@ int client_cmd_device(clientcon *device, Tokenizer &t)
 	else
 	{
 
-		// ack the device
-		send_ok(device);
-
 		//see if there is a client with the same uuid as the device that is registering
 		clientcon *conc = get_client_by_uuid(uuid);
 		if(!conc)
@@ -489,7 +495,12 @@ int client_cmd_device(clientcon *device, Tokenizer &t)
 				"Please check that the uuid of your device and client match");
 			//remove it from the list of known clients and make it reconnect
 			client_remove(device->sock);
+			return -1;
 		}
+
+		// ack the device
+		send_ok(device);
+
 		//conc is non null, so we add the devicecon to the client
 
 		//generate a new device to hand to the proper client
