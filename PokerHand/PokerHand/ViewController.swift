@@ -37,6 +37,8 @@ class ViewController: UIViewController {
 
         // TCP connection to the poker server.
         var(success, errmsg) = self.client.connect(timeout: 10)
+        clientUuid.text = "f154c24f-4c72-4ad2-a6a3-3ee015666cfc"
+        serverIP.text = "128.220.247.211"
         
         if !success {
             println(errmsg)
@@ -59,7 +61,12 @@ class ViewController: UIViewController {
                 updateCardImages(cards.lCard, strRCard: cards.rCard)
             }
         } else {
-            println(errmsg)
+            let alert = UIAlertController(title: "Network Problem", message: "You are not connected to the server.  Try registering your device to open a connection", preferredStyle: UIAlertControllerStyle.Alert)
+            let alertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default) { (UIAlertAction) -> Void in }
+            alert.addAction(alertAction)
+            presentViewController(alert, animated: true) { () -> Void in }
+            return
+
         }
     }
     
