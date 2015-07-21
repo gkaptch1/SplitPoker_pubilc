@@ -1113,6 +1113,7 @@ int client_cmd_create(clientcon *client, Tokenizer &t)
 		unsigned int blinds_time;
 		string password;
 		bool restart;
+		bool bots;
 	} ginfo = {
 		"user_game",
 		10,
@@ -1210,6 +1211,10 @@ int client_cmd_create(clientcon *client, Tokenizer &t)
 			else
 				cmderr = true;
 		}
+		else if (infotype == "bots" && havearg) 
+		{
+			ginfo.bots = Tokenizer::string2int(infoarg) > 0 ? true : false;
+		}
 	}
 	
 	if (!cmderr)
@@ -1228,6 +1233,10 @@ int client_cmd_create(clientcon *client, Tokenizer &t)
 		g->setBlindsTime(ginfo.blinds_time);
 		g->setPassword(ginfo.password);
 		g->setRestart(ginfo.restart);
+
+		//if the client would like to play against bots, we set up bots for them and add them to the game
+		//TODO ^^^^^
+
 		games[gid] = g;
 		
 		send_ok(client);
