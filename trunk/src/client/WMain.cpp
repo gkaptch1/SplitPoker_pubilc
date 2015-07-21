@@ -802,6 +802,7 @@ void WMain::actionCreateGame()
 	gc.blinds_factor = dialogCreateGame.getBlindsFactor();
 	gc.blinds_time = dialogCreateGame.getBlindsTime();
 	gc.password = dialogCreateGame.getPassword();
+	gc.play_against_bots = dialogCreateGame.getPlayAgainstBots();
 
 	((PClient*)qApp)->createGame(&gc);
 	((PClient*)qApp)->requestGamelist();

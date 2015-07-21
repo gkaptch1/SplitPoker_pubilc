@@ -384,8 +384,7 @@ bool client_remove_without_teardown(socktype sock)
 	//This is used to reassign a known socket connectioin from clientcon to devicecon
 	
 	//itterate through all connected clients
-	for (clients_type::iterator e = clients.begin(); e != clients.end(); e++) {
-		clientcon *client = &(*e);
+	for (clients_type::iterator client = clients.begin(); client != clients.end(); client++) {
 		//if the sockets match, we remove the referance to the client - it is now a devicecon instead
 		if (client->sock == sock) { 
 			clients.erase(client);

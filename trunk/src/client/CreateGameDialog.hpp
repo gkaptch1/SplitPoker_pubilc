@@ -52,6 +52,7 @@ public:
 	chips_type getBlindsStart() const;
 	double getBlindsFactor() const;
 	unsigned int getBlindsTime() const;
+	unsigned int getPlayAgainstBots() const;
 	
 
 private:
@@ -63,6 +64,7 @@ private:
 	QDoubleSpinBox  *spinBlindsFactor;
 	QSpinBox        *spinBlindsTime;
 	QLineEdit	*editPassword;
+	QCheckBox	*botCheckbox;
 	
 private slots:
 	void actionOk();

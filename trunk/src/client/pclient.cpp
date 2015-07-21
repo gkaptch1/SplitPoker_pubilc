@@ -1133,7 +1133,7 @@ bool PClient::createGame(gamecreate *createinfo)
 	
 	snprintf(msg, sizeof(msg), "CREATE players:%d stake:%d timeout:%d "
 		"blinds_start:%d blinds_factor:%d blinds_time:%d password:%s "
-		"\"name:%s\"",
+		"\"name:%s\" bots:%d",
 		createinfo->max_players,
 		createinfo->stake,
 		createinfo->timeout,
@@ -1141,7 +1141,8 @@ bool PClient::createGame(gamecreate *createinfo)
 		int(createinfo->blinds_factor * 10),
 		createinfo->blinds_time,
 		createinfo->password.simplified().toStdString().c_str(),
-		createinfo->name.simplified().toStdString().c_str());
+		createinfo->name.simplified().toStdString().c_str(),
+		createinfo->play_against_bots);
 	netSendMsg(msg);
 	
 	return true;

@@ -129,6 +129,7 @@ typedef struct {
 	chips_type blinds_start;
 	double blinds_factor;
 	QString password;
+	unsigned int play_against_bots;
 } gamecreate;
 
 

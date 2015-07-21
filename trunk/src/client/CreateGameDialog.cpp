@@ -90,6 +90,9 @@ CreateGameDialog::CreateGameDialog(QWidget *parent) : QDialog(parent)
 	spinStake->setMaximum(1000000);
 	spinStake->setSingleStep(100);
 	spinStake->setValue(1500);
+
+	botCheckbox = new QCheckBox;
+	botCheckbox->setText("Play Against Bots");
 	
 	QGridLayout *layoutPlayers = new QGridLayout;
 	layoutPlayers->addWidget(labelPlayers, 0, 0);
@@ -98,6 +101,7 @@ CreateGameDialog::CreateGameDialog(QWidget *parent) : QDialog(parent)
 	layoutPlayers->addWidget(spinTimeout, 1, 1);
 	layoutPlayers->addWidget(labelStake, 2, 0);
 	layoutPlayers->addWidget(spinStake, 2, 1);
+	layoutPlayers->addWidget(botCheckbox, 3, 0);
 	groupPlayers->setLayout(layoutPlayers);
 	
 	
@@ -153,7 +157,6 @@ CreateGameDialog::CreateGameDialog(QWidget *parent) : QDialog(parent)
 	layoutPrivate->addWidget(labelPassword, 1, 0);
 	layoutPrivate->addWidget(editPassword, 1, 1);
 	groupPrivate->setLayout(layoutPrivate);
-	
 	
 	QGridLayout *mainLayout = new QGridLayout;
 	mainLayout->addWidget(groupGeneral, 0, 0);
@@ -219,4 +222,13 @@ double CreateGameDialog::getBlindsFactor() const
 unsigned int CreateGameDialog::getBlindsTime() const
 { 
 	return spinBlindsTime->value();
+}
+
+unsigned int CreateGameDialog::getPlayAgainstBots() const
+{
+	if (botCheckbox->isChecked()) {
+		return 1;
+	} else {
+		return 0;
+	}
 }
