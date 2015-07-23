@@ -7,14 +7,14 @@
 	<key>IDESourceControlProjectIdentifier</key>
 	<string>AB729C12-2A4D-4DEC-BCE5-1A2397294EC1</string>
 	<key>IDESourceControlProjectName</key>
-	<string>project</string>
+	<string>PokerHand</string>
 	<key>IDESourceControlProjectOriginsDictionary</key>
 	<dict>
 		<key>2C30AA9D205FCF37A39935814E24588AA45EE241</key>
 		<string>bitbucket.org:gkaptchuk/hn_poker_mod.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>PokerHand/PokerHand.xcodeproj/project.xcworkspace</string>
+	<string>PokerHand/PokerHand.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>2C30AA9D205FCF37A39935814E24588AA45EE241</key>

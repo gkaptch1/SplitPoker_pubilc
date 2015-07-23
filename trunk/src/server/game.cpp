@@ -24,6 +24,7 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <future>
 
 #include "Config.h"
 #include "Platform.h"
@@ -1065,6 +1066,10 @@ int client_cmd_action(clientcon *client, Tokenizer &t)
 	return 0;
 }
 
+void connectedNewBot() {
+	
+}
+
 int client_cmd_create(clientcon *client, Tokenizer &t)
 {
 	if (!config.getBool("perm_create_user") && !(client->state & Authed))
@@ -1233,10 +1238,6 @@ int client_cmd_create(clientcon *client, Tokenizer &t)
 		g->setBlindsTime(ginfo.blinds_time);
 		g->setPassword(ginfo.password);
 		g->setRestart(ginfo.restart);
-
-		//if the client would like to play against bots, we set up bots for them and add them to the game
-		//TODO ^^^^^
-
 		games[gid] = g;
 		
 		send_ok(client);
@@ -1244,6 +1245,15 @@ int client_cmd_create(clientcon *client, Tokenizer &t)
 		
 		log_msg("game", "%s (%d) created game %d",
 			client->info.name, client->id, gid);
+
+		//if the client would like to play against bots, we set up bots for them and add them to the game
+		//bots register as clients with a previously known gameid (gid) and are run on the main server's system.
+
+		for (int i = 2; i <= ginfo.max_players; i++) {
+			//Generate a new bot
+			// use fork()
+		}
+
 		
 		
 		for (clients_type::iterator e = clients.begin(); e != clients.end(); e++)

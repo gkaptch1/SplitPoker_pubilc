@@ -93,6 +93,8 @@ class ViewController: UIViewController {
             registrationMessage = "PDEVICE \(version) \(self.clientUuid.text)\n"
         }
         
+        print(registrationMessage)
+        
         var(success, errmsg) = self.client.send(str:registrationMessage)
         
         if success {
@@ -100,7 +102,9 @@ class ViewController: UIViewController {
             var data = client.read(1024*10)
             if let d = data {
                 var srvResp = String(bytes: d, encoding: NSUTF8StringEncoding)
-                if (srvResp?.hasPrefix("Optional(\"ERR 32\"") != nil) {
+                let isUUIDErrorMsg = srvResp?.hasPrefix("Optional(\"ERR 32\"")
+                if ( isUUIDErrorMsg! ) {
+                    println(srvResp)
                     let alert = UIAlertController(title: "Invalid UUID", message: "Please check that your computer client is connected your device has a matching UUID", preferredStyle: UIAlertControllerStyle.Alert)
                     let alertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default) { (UIAlertAction) -> Void in }
                     alert.addAction(alertAction)
@@ -123,6 +127,7 @@ class ViewController: UIViewController {
                             let cards = self.parseServerResponse(srvResp!)
                             //Do the UI update on the main thread
                             dispatch_async(dispatch_get_main_queue()) {
+                                println("Updating Cards on Main Thread")
                                 self.updateCardImages(cards.lCard, strRCard: cards.rCard)
                             }
                         }
