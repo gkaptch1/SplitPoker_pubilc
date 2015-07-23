@@ -55,6 +55,6 @@
 #endif
 
 /* hard-coded path to data-dir */
-//#define DATA_DIR  "/usr/local/share"
+#define DATA_DIR  "/Applications/holdingnuts"
 
 #endif /* _CONFIG_H */

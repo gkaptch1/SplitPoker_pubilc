@@ -4,7 +4,7 @@ project (HOLDINGNUTS)
 
 # switch features on/off
 option (ENABLE_CLIENT	"Configure for client"		On)
-option (ENABLE_AUDIO	"Configure client with audio"	On)
+option (ENABLE_AUDIO	"Configure client with audio"	Off)
 option (ENABLE_SERVER	"Configure for server"		On)
 option (ENABLE_TEST	"Configure for test-utils"	Off)
 option (ENABLE_DEBUG	"Configure for debug-build"	Off)

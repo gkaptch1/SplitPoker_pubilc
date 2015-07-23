@@ -124,6 +124,8 @@ private:
 	
 	//! \brief Combobox server adress
 	QComboBox		*cbSrvAddr;
+	//! \brief Combobox server adress
+	QLineEdit		*leUUID;
 	//! \brief Connect Button
 	QPushButton		*btnConnect;
 	//! \brief Close connection Button

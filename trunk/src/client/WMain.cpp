@@ -251,7 +251,11 @@ WMain::WMain(QWidget *parent) : QMainWindow(parent, 0)
 	cbSrvAddr->setToolTip(
 		tr("The desired server (domain-name or IP) to connect with.\nYou can optionally specify a port number.\nFormat: <host>[:<port>]"));
 	connect(cbSrvAddr->lineEdit(), SIGNAL(returnPressed()), this, SLOT(actionConnect()));
-	
+
+	// UUid entry information
+	leUUID = new QLineEdit(this);
+	leUUID->setText(config.get("uuid").c_str());
+
 	btnConnect = new QPushButton(tr("&Connect"), this);
 	btnConnect->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 	connect(btnConnect, SIGNAL(clicked()), this, SLOT(actionConnect()));
@@ -263,8 +267,13 @@ WMain::WMain(QWidget *parent) : QMainWindow(parent, 0)
 	QLabel *lblServer = new QLabel(tr("Server:"), this);
 	lblServer->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
 
+	QLabel *lblUuid = new QLabel(tr("User ID:"), this);
+	lblUuid->setSizePolicy(QSizePolicy::Maximum, QSizePolicy::Maximum);
+
 	QHBoxLayout *lConnect = new QHBoxLayout();
 	lConnect->setContentsMargins(0,0,0,0);
+	lConnect->addWidget(lblUuid);
+	lConnect->addWidget(leUUID);
 	lConnect->addWidget(lblServer);
 	lConnect->addWidget(cbSrvAddr);
 	lConnect->addWidget(btnConnect);
@@ -629,6 +638,9 @@ void WMain::actionConnect()
 	}
 	
 	writeServerlist();
+
+	//Update the UUID the system uses when we hit connect
+	config.set("uuid", leUUID->text().toUtf8().constData());
 	
 	// split up the connect-string: <hostname>:<port>
 	QStringList srvlist = cbSrvAddr->lineEdit()->text().split(":", QString::SkipEmptyParts);
