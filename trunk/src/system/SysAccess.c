@@ -248,7 +248,7 @@ const char* sys_data_path()
 	unsigned int i;
 	static char *search_dirs[] = {
 #if defined(DATA_DIR)
-		DATA_DIR,
+		DATA_DIR, "data",
 #else
 		"data",
 #if !defined(PLATFORM_WINDOWS)
