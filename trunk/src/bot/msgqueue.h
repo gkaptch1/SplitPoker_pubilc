@@ -245,14 +245,6 @@ private:
 	void CalcPlayerOffset();
 	void reset();
 
-	/* screen i/o */
-	int GetButtonOnTable();
-    Card GetCardOnTable(int x, int y);
-	PokerHand GetHoleCardsOnTable(int player);
-    int GetColor(int x, int y);
-    int Keyboard(int key);
-    int MouseClick(int x, int y, bool raw=false);
-
 public:
     MsgQueue();
     ~MsgQueue();
