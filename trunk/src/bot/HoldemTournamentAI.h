@@ -129,7 +129,7 @@ protected:
 
 	ofstream profiler;
 
-#define profile_line(x) profiler << "Game " << table->getGameID() << ", Hand #" << table->getNumHands() << " [ " << table->getHand().toString() << " - " << table->getBoard().toString() << " ], " << /*" File " << __FILE__ <<*/ " (" << __LINE__ << ") :  " << (x) << endl;
+#define profile_line(x) profiler << "Game " << table->getGameID() << ", Hand #" << table->getNumHands() << " [ " << table->getHand().toString() << " - " << table->getBoard().toString() << " ], " << /*" File " << __FILE__ <<*/ " (" << __LINE__ << ") :  " << (x) << endl";
 #define toggleVar(v) {profile_line(#v); v=true;}
 
 	/* strategy */

@@ -685,11 +685,14 @@ void PBot::serverCmdSnap(Tokenizer &t)
 		break;
 	}
 
+	//TODO Make sure we update the MsgQueue's impression of the table each time we update
+	translate_hn_to_pp_state(t, snap, tinfo);
+
 	//TODO hook in the AI decision here
 	if (tinfo->s_cur == tinfo->my_seat) 
 	{
 		//lets make a decision from the AI only if its our turn
-		ActionRet action = makePlay(tinfo);
+		ActionRet action = makePlay();
 	}
 
 }
@@ -1602,6 +1605,185 @@ bool config_load()
 	}
 	
 	return true;
+}
+
+ActionRet makePlay() 
+{
+	//retirn ai->makePlay();
+}
+
+void translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo)
+{
+
+	//first we have to decide what kind of snapshot this is so we can decided how to process it.
+	switch( snaptype ) {
+		case SnapGameState:
+			//these announce a change in the game state.  ie: New Game, New Hand, etc...
+			snap_gamestate_type gamestate_type = (snap_gamestate_type) t.getNextInt();
+
+			break;
+		case SnapTable:
+			//updates when something changes in the state of the table 
+				if (!tinfo)
+					return;
+				
+				table_snapshot &table = tinfo->snap;
+				HoleCards &holecards = tinfo->holecards;
+
+				//TODO set msgqueue's hole cards
+				
+				Tokenizer st(":");
+				
+				// state:betting_round
+				std::string tmp = t.getNext();
+				st.parse(tmp);
+				
+				table.state = st.getNextInt();
+				table.betting_round = st.getNextInt();
+				
+				//TOOD set msgqueues round state
+
+				// dealer:sb:bb:current:lastbet
+				tmp = t.getNext();
+				st.parse(tmp);
+				table.s_dealer = st.getNextInt();
+				table.s_sb = st.getNextInt();
+				table.s_bb = st.getNextInt();
+				table.s_cur = st.getNextInt();
+				table.s_lastbet = st.getNextInt();
+
+				//TODO set msgqueues info about the last action at the table
+				
+				// community-cards
+				{
+					std::string board = t.getNext().substr(3);
+					CommunityCards &cc = table.communitycards;
+					
+					Tokenizer ct(":");
+					ct.parse(board);
+					
+					if (ct.count() == 0)
+						cc.clear();
+					
+					if (ct.count() >= 3)
+					{
+						Card cf1(ct.getNext().c_str());
+						Card cf2(ct.getNext().c_str());
+						Card cf3(ct.getNext().c_str());
+						
+						cc.setFlop(cf1, cf2, cf3);
+					}
+					
+					if (ct.count() >= 4)
+					{
+						Card ct1(ct.getNext().c_str());
+						
+						cc.setTurn(ct1);
+					}
+					
+					if (ct.count() == 5)
+					{
+						Card cr1(ct.getNext().c_str());
+						
+						cc.setRiver(cr1);
+					}
+				}
+
+				//TODO set msgqueue's community cards
+				
+				// table.seats
+				table.my_seat = -1;
+				table.nomoreaction = false;
+				
+				const unsigned int seat_max = 10;
+				memset(table.seats, 0, seat_max*sizeof(seatinfo));
+				
+				tmp = t.getNext();
+				do {
+					//dbg_msg("seat", "%s", tmp.c_str());
+					
+					Tokenizer st(":");
+					st.parse(tmp);
+					
+					unsigned int seat_no = Tokenizer::string2int(st.getNext().substr(1));
+					
+					seatinfo si;
+					memset(&si, 0, sizeof(si));
+					
+					si.valid = true;
+					si.client_id = st.getNextInt();
+					
+					if (si.client_id == srv.cid)
+						table.my_seat = seat_no;
+					
+					int pstate = st.getNextInt();
+					if (pstate & PlayerInRound)
+						si.in_round = true;
+					if (pstate & PlayerSitout)
+						si.sitout = true;
+					
+					si.stake = st.getNextInt();
+					si.bet = st.getNextInt();
+					si.action = (Player::PlayerAction) st.getNextInt();
+					
+					std::string shole = st.getNext();
+					if (shole.length() == 4)
+					{
+						Card h1(shole.substr(0, 2).c_str());
+						Card h2(shole.substr(2, 2).c_str());
+						si.holecards.setCards(h1, h2);
+						
+						// if there are hole-cards in the snapshot
+						// then there's no further action possible
+						// THIS BASICALLY MEANS THE ROUND IS OVER.  PEOPLE ARE SHOWING CARDS
+
+						table.nomoreaction = true;
+					}
+					else
+						si.holecards.clear();
+					
+					if (seat_no < seat_max)
+						table.seats[seat_no] = si;
+					
+					tmp = t.getNext();
+				} while (tmp[0] == 's');
+				
+				
+				table.pots.clear();
+				
+				// pots
+				do {
+					//dbg_msg("pot", "%s", tmp.c_str());
+					Tokenizer pt(":");
+					pt.parse(tmp);
+					
+					pt.getNext();   // pot-no; unused
+					chips_type potsize = pt.getNextInt();
+					table.pots.push_back(potsize);
+					
+					tmp = t.getNext();
+				} while (tmp[0] == 'p');
+				
+				
+				table.minimum_bet = Tokenizer::string2int(tmp);
+				
+			break;
+		case SnapCards:
+			break;
+		case SnapWinPot:
+			break;
+		case SnapOddChips:
+			break;
+		case SnapPlayerAction:
+			break;
+		case SnapPlayerCurrent:
+			break;
+		case SnapPlayerShow:
+			break;
+		case SnapFoyer:
+			break;
+	}
+
 }
 
 int main(int argc, char **argv)

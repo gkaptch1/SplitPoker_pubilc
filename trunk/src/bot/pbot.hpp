@@ -222,6 +222,9 @@ private:
 	
 	bool addTable(int gid, int tid);
 
+	ActionRet makePlay();
+	void translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo);
+
 public slots:
 	//! \brief query gamelist from Server
 	void requestGamelist();

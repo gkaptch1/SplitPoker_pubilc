@@ -41,9 +41,17 @@ struct StatusList
     int livingplayers;
     int dealer;
     int bb;
+    int sb;
 
 //    vector<Card> cards;
-    Card cards[20];
+    // cards[0] and cards[1] are actually hole cards
+    // cards[2], cards[3] and cards[4] are the flop
+    // cards[5] iss the turn and cards[6] is the river
+    // Other spaces seem to never be referenced
+    Card cards[20];  
+
+    Card community_cards[5];
+    Card hole_cards[2];
 };
 
 /* class MsgQueueBase *********************************************************/
@@ -99,6 +107,26 @@ public:
 
 	/* display */
 	ostream& cur(int x, int y);
+
+	/* setters for StatusList and EventList */
+	void setStatusStage(char s) 				{ status.stage = s; 						}
+	void setStatusLastAction(char la)			{ status.lastAction = la;					}
+	void setStatushandCount(int hc)				{ status.handcount = hc;					}
+	void setStatusExtraBet(int eb)				{ status.extrabet = eb;						}
+	void setStatusAllIns(int alls)				{ status.allins = alls;						}
+	// TODO void setStatusbet(int[])
+	void setStatusPots(int pt)					{ status.pot = pt;							}
+	void setStatusActive(int a)					{ status.active = a;						}
+	void setStatusLivingPlayers(int lp)			{ status.livingplayers = lp;				}
+	void setStatusDealer(int dlr)				{ status.dealer = dlr;						}
+	void setStatusBigBlind(int blind)			{ status.bb = blind;						} 
+	void setStatusSmallBline(int blind)			{ status.sb = blind;						}
+
+
+	    Card cards[20];  //GABE not sure why there are 20 of these...
+
+    Card community_cards[5];
+    Card hole_cards[2];
 
 	void print();
 	void printLight();
