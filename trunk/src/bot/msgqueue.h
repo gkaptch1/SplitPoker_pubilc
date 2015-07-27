@@ -47,11 +47,8 @@ struct StatusList
     // cards[0] and cards[1] are actually hole cards
     // cards[2], cards[3] and cards[4] are the flop
     // cards[5] iss the turn and cards[6] is the river
-    // Other spaces seem to never be referenced
+    // Other spaces seem to never be referenced... still not sure why they are there...
     Card cards[20];  
-
-    Card community_cards[5];
-    Card hole_cards[2];
 };
 
 /* class MsgQueueBase *********************************************************/
@@ -122,11 +119,10 @@ public:
 	void setStatusBigBlind(int blind)			{ status.bb = blind;						} 
 	void setStatusSmallBline(int blind)			{ status.sb = blind;						}
 
-
-	    Card cards[20];  //GABE not sure why there are 20 of these...
-
-    Card community_cards[5];
-    Card hole_cards[2];
+	void setStatusHoleCards(Card c1, Card c2)   { setCard(c1, 0); setCard(c2,1);			}
+	void setStatusFlopCards(Card c1, Card c2, Card c3) {setCard(c1, 2); setCard(c2,3); setCard(c3,4);}
+	void setStatusTurnCard(Card c1)				{ setCard(c1, 5);							}
+	void setStatusRiverCard(Card c1)			{ setCard(c1, 6);							}
 
 	void print();
 	void printLight();

@@ -1629,8 +1629,8 @@ void translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo)
 				
 				table_snapshot &table = tinfo->snap;
 				HoleCards &holecards = tinfo->holecards;
-
-				//TODO set msgqueue's hole cards
+				//TODO translate from hn holecards to pp holecards
+				msgqueue.setStatusHoleCards(*holecards);
 				
 				Tokenizer st(":");
 				
@@ -1646,13 +1646,19 @@ void translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo)
 				// dealer:sb:bb:current:lastbet
 				tmp = t.getNext();
 				st.parse(tmp);
+				/*
 				table.s_dealer = st.getNextInt();
 				table.s_sb = st.getNextInt();
 				table.s_bb = st.getNextInt();
 				table.s_cur = st.getNextInt();
 				table.s_lastbet = st.getNextInt();
+				*/
 
 				//TODO set msgqueues info about the last action at the table
+				msgqueue.setStatusDealer(st.getNextInt());
+				msgqueue.setStatusSmallBlind(st.getNextInt());
+				msgqueue.setStatusBigBlind(st.getNextInt());
+				//TODO last two instructions...
 				
 				// community-cards
 				{
@@ -1664,6 +1670,7 @@ void translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo)
 					
 					if (ct.count() == 0)
 						cc.clear();
+					//TODO clear out the cards buffer in msgqueue
 					
 					if (ct.count() >= 3)
 					{
@@ -1671,25 +1678,26 @@ void translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo)
 						Card cf2(ct.getNext().c_str());
 						Card cf3(ct.getNext().c_str());
 						
-						cc.setFlop(cf1, cf2, cf3);
+						//TODO translate cards
+						msgqueue.setStatusFlopCards(cf1, cf2, cf3);
 					}
 					
 					if (ct.count() >= 4)
 					{
 						Card ct1(ct.getNext().c_str());
 						
-						cc.setTurn(ct1);
+						//TODO translate cards
+						msgqueue.setStatusTurnCard(ct1);
 					}
 					
 					if (ct.count() == 5)
 					{
 						Card cr1(ct.getNext().c_str());
 						
-						cc.setRiver(cr1);
+						//TODO translate cards
+						msgqueue.setStatusRiverCard(cr1);
 					}
 				}
-
-				//TODO set msgqueue's community cards
 				
 				// table.seats
 				table.my_seat = -1;
@@ -1699,6 +1707,7 @@ void translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo)
 				memset(table.seats, 0, seat_max*sizeof(seatinfo));
 				
 				tmp = t.getNext();
+				int living_players = 0;
 				do {
 					//dbg_msg("seat", "%s", tmp.c_str());
 					
@@ -1713,9 +1722,12 @@ void translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo)
 					si.valid = true;
 					si.client_id = st.getNextInt();
 					
-					if (si.client_id == srv.cid)
+					if (si.client_id == srv.cid) 
+					{
+						//TODO indicate to the msgqueue that this is ME
 						table.my_seat = seat_no;
-					
+					}
+
 					int pstate = st.getNextInt();
 					if (pstate & PlayerInRound)
 						si.in_round = true;
@@ -1725,6 +1737,10 @@ void translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo)
 					si.stake = st.getNextInt();
 					si.bet = st.getNextInt();
 					si.action = (Player::PlayerAction) st.getNextInt();
+
+					//Checking to see if the current player is sitting at the table and has not yet folded.
+					if (si.in_round && si.action != Player::PlayerAction::Fold && si.action != Player::PlayerAction::Sitout)
+						living_players++;
 					
 					std::string shole = st.getNext();
 					if (shole.length() == 4)
@@ -1736,6 +1752,7 @@ void translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo)
 						// if there are hole-cards in the snapshot
 						// then there's no further action possible
 						// THIS BASICALLY MEANS THE ROUND IS OVER.  PEOPLE ARE SHOWING CARDS
+						// TODO nothing?
 
 						table.nomoreaction = true;
 					}
@@ -1747,6 +1764,8 @@ void translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo)
 					
 					tmp = t.getNext();
 				} while (tmp[0] == 's');
+
+				msgqueue.setStatusLivingPlayers(living_players);
 				
 				
 				table.pots.clear();

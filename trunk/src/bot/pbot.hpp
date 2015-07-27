@@ -194,10 +194,10 @@ private:
 	
 private:
 	servercon		srv;
-	players_type		players;
+	players_type	players;
 	games_type		games;
-	gamelist_type		gamelist;
-    HoldemTournamentAIBase	*ai;
+	gamelist_type	gamelist;
+    MsgQueue 		msgqueue;
  
 private:	
 	int netSendMsg(const char *msg);
