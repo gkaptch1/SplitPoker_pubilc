@@ -176,12 +176,6 @@ string MsgQueue::getCurrentTime()
 /* MsgQueue::loadTable() ******************************************************/
 void MsgQueue::loadTable()
 {	
-	starttime=timeGetTime();
-	hwndFront=GetForegroundWindow();
-	SetForegroundWindow(RVPhwnd);
-	RVPhdc=GetDC(RVPhwnd);
-	Sleep(200);
-	rounds++;
 }
 
 /* MsgQueue::closeTable() *****************************************************/
@@ -269,48 +263,7 @@ int MsgQueue::GetNameIndexTrue(int n)
 /* MsgQueue::LoadTable() ******************************************************/
 int MsgQueue::LoadTable(char* buy, char* b, char* t)
 {
-    char str[512];
-	memset(str,0,sizeof(str));
-    str[0]=0;
 
-//    strcat(str, ("Royal Vegas Poker - (10 Seat Table) - "+ai->getAIMoniker()+" - Blinds ").c_str()); // Old table info
-//    strcat(str, ("PokerTime - (10 Seat Table) - "+ai->getAIMoniker()+" - Blinds ").c_str());
-    strcat(str, ("Poker Time - Hold'em (10 Seat Table) - "+ai->getAIMoniker()+" - ").c_str());
-    strcat(str, b);
-    strcat(str, " ");
-    strcat(str, t);
-    strcat(str, " [Hold'Em Real Money No Limit]");
-
-	cout << "---" << endl << str << "---" << endl;
-
-    strcat(blinds,b);
-    table=t;
-	strcat(buyin,db->getBuyinFromName(table).c_str());
-	if (db->getBuyinFromName(table)=="unknown") {
-		memset(buyin,0,sizeof(buyin));
-		strcat(buyin,"unkn");
-	}
-
-    RVPhwnd = FindWindow(NULL, str);
-    textbox = GetDlgItem(RVPhwnd, 101);
-
-
-    // Used for debugging against new program versions
-
-    for (int i=0; i<256*256; i++) {
-        HWND tmp=GetDlgItem(RVPhwnd, i);
-        if (tmp!=0) printf("%i\n",i);
-    }
-    printf("%s, %s, %s, %i, %i\n", b, t, str, RVPhwnd, textbox);
-
-    if (RVPhwnd != NULL && textbox != NULL) {
-        printf("Connected on table %s.\n", t);
-    }
-    else {
-        printf("Could not connect to %s.  Check Blinds structures.\n", table);
-        return 0;
-    }
-    return 1;
 }
 
 /* MsgQueue::LoadDumpFile() ***************************************************/
@@ -358,26 +311,6 @@ int MsgQueue::DoBet(int b)
 /* MsgQueue::stayActive() *****************************************************/
 void MsgQueue::stayActive()
 {
-	bool click=false;
-	for (int i=0; i<3; i++) {
-		for (int j=0; j<3; j++) {
-			if (GetRValue(GetColor(6+i,524+j))<100) {
-				click=true;
-			}
-		}
-	}
-
-	if (click) {
-		cur (0,1);
-		cout << "Activate: " << (void*)GetColor(8,526) << "   " << endl;
-		MouseClick(30,565);
-		ai->dbRegAct("stayActive","");
-	
-		char buff[400];
-		memset(buff,0,sizeof(buff));
-		strcat(buff,"*stayActive");
-		fwrite(buff,1,12,filedesc);
-	}
 }
 
 
