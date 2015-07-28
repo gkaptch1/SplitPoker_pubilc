@@ -20,6 +20,40 @@ struct AIStat;
 #define VIEW_DEFAULT		1
 #define VIEW_PLAYER			2
 
+/* Hold'em Constants **********************************************************/
+
+#define HOLDEM_PLAYERS						10
+
+#define PF_GRP_A						    1
+#define PF_GRP_B							2
+#define PF_GRP_C							2*2
+#define PF_GRP_D							2*2*2
+#define PF_GRP_E							2*2*2*2
+#define PF_GRP_F							2*2*2*2*2
+#define PF_GRP_G							2*2*2*2*2*2
+#define PF_PAIR								2*2*2*2*2*2*2
+#define PF_SUITED							2*2*2*2*2*2*2*2
+#define PF_CONNECTED						2*2*2*2*2*2*2*2*2
+#define PF_SUITCONN							2*2*2*2*2*2*2*2*2*2
+#define PF_ALLIN_A							2*2*2*2*2*2*2*2*2*2*2
+#define PF_ALLIN_B							2*2*2*2*2*2*2*2*2*2*2*2
+#define PF_ALLIN_C							2*2*2*2*2*2*2*2*2*2*2*2*2
+
+#define STAGE_PREFLOP                       'p'
+#define STAGE_FLOP                          'f'
+#define STAGE_TURN                          't'
+#define STAGE_RIVER                         'r'
+#define STAGE_SHOWDOWN                      's'
+
+#define FOLD                                'f'
+#define CHECK                               'p'
+#define CALL                                'c'
+#define ALLIN                               'a'
+#define BET                                 'b'
+#define RAISE                               'r'
+#define SHOW							    's'
+#define STAGE_CHANGE						'd'
+
 /* struct EventList ***********************************************************/
 struct EventList
 {
@@ -107,6 +141,8 @@ public:
 
 	/* setters for StatusList and EventList */
 	void setStatusStage(char s) 				{ status.stage = s; 						}
+	// I am aware this is shitty.  I dont want it clogging up the cpp file.
+	void setStatusStage(int i)					{ switch (i) { case 1: status.stage = 'p'; break; case 2: status.stage = 'f'; break; case 3: status.stage = 't'; break; case 4: status.stage = 'r'; break; case 5: status.stage = 's'; break;}}
 	void setStatusLastAction(char la)			{ status.lastAction = la;					}
 	void setStatushandCount(int hc)				{ status.handcount = hc;					}
 	void setStatusExtraBet(int eb)				{ status.extrabet = eb;						}

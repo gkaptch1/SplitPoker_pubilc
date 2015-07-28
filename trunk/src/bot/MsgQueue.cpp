@@ -313,20 +313,6 @@ void MsgQueue::stayActive()
 {
 }
 
-
-
-/* MsgQueue::GetCardOnTable() *************************************************/
-struct point
-{
-    int x,y;
-};
-
-struct OCRDef
-{
-    char val;
-    point p[MAXOCRPOINTS];
-};
-
 void MsgQueue::CalcPlayerOffset()
 {
 }
