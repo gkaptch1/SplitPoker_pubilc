@@ -67,7 +67,6 @@ struct EventList
 struct StatusList
 {
     char stage;
-	char lastaction;
     int handcount;
     int bet[10],extrabet,allins;
     int pot;
@@ -143,7 +142,6 @@ public:
 	void setStatusStage(char s) 				{ status.stage = s; 						}
 	// I am aware this is shitty.  I dont want it clogging up the cpp file.
 	void setStatusStage(int i)					{ switch (i) { case 1: status.stage = 'p'; break; case 2: status.stage = 'f'; break; case 3: status.stage = 't'; break; case 4: status.stage = 'r'; break; case 5: status.stage = 's'; break;}}
-	void setStatusLastAction(char la)			{ status.lastAction = la;					}
 	void setStatushandCount(int hc)				{ status.handcount = hc;					}
 	void setStatusExtraBet(int eb)				{ status.extrabet = eb;						}
 	void setStatusAllIns(int alls)				{ status.allins = alls;						}
@@ -198,7 +196,6 @@ public:
 	int getPlayersAlive()						{ return status.livingplayers;				}
 	int getPlayersActive();
 
-	char getLastAction()						{ return status.lastaction;					}
 	Card getCard(int n)							{ return status.cards[n];					}
 	double getPotOdds()							{ return getPotOdds(getCostToCall());		}
 	double getPotOdds(int cost)					{ return status.pot/(double)cost;			}
@@ -313,12 +310,6 @@ public:
 	bool tableGood();
 
 	int virtual totalCashOnTable()				{ return 10000;				 		}
-	int virtual DoCheck()						{ return MouseClick(230,330); 		}
-    int virtual DoCall()          				{ return MouseClick(350,330); 		}
-    int virtual DoRaise()         				{ return MouseClick(460,330); 		}
-    int virtual DoBet()           				{ return MouseClick(460,330); 		}
-    int virtual DoBet(int num);
-	int virtual DoFold()          				{ return MouseClick(570,330);		}
 
 	void stayActive();
 

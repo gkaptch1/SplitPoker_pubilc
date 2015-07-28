@@ -245,7 +245,6 @@ void TournamentData::RegisterHand()
 	strcat(cmd,table->getNumHands());										strcat(cmd,"','");
 	strcat(cmd,action_id++);												strcat(cmd,"','");
 	strcat(cmd,table->getActionPlayer());									strcat(cmd,"','");
-	strcat(cmd,table->getLastAction());										strcat(cmd,"','");
 	strcat(cmd,table->getStage());											strcat(cmd,"','");
 	strcat(cmd,table->getCostToCall());										strcat(cmd,"','");
 	strcat(cmd,table->getPot());											strcat(cmd,"','");
@@ -334,8 +333,7 @@ void TournamentData::RegisterHand()
 		 << table->getPositionAfterAbs()				<< ","		
 		 << table->getPlayersAlive()					<< ","		
 		 << table->getPlayersActive()					<< ","		
-		 << table->getStack(table->getActionPlayer())	<< ","
-		 << table->getLastAction()						<< endl;
+		 << table->getStack(table->getActionPlayer())	<< endl;
 }
 		
 /* TournamentData::RegisterAIAct() ********************************************/

@@ -31,6 +31,8 @@
 
 #include "pbot.hpp"
 
+#include "Poker/card.h"
+
 #include <cstdlib>
 #include <cstdio>
 #include <ctime>
@@ -40,9 +42,6 @@
 #include <QMessageBox>
 #include <QDateTime>
 
-#ifndef NOAUDIO
-# include "Audio.h"
-#endif
 #include "data.h"
 
 
@@ -640,12 +639,6 @@ void PBot::serverCmdSnap(Tokenizer &t)
 		// silently drop message if there is no table-info
 		if (!tinfo || !tinfo->window)
 			return;
-		
-#if 0
-		tinfo->window->addServerMessage(
-			QString(tr("%1, it's your turn!")
-				.arg(getPlayerName(srv.cid))));
-#endif
 		break;
 	case SnapPlayerAction:
 		serverCmdSnapPlayerAction(t, gid, tid, tinfo);
@@ -661,19 +654,6 @@ void PBot::serverCmdSnap(Tokenizer &t)
 			const unsigned int poti = t.getNextInt();
 			const chips_type amount = t.getNextInt();
 			
-			QString smsg;
-			if (snap == SnapWinPot)
-				smsg = QString(tr("%1 wins pot #%2 with %3.")
-					.arg(getPlayerName(cid))
-					.arg(poti+1)
-					.arg(amount));
-			else
-				smsg = QString(tr("%1 receives %3 odd chips of split pot #%2.")
-					.arg(getPlayerName(cid))
-					.arg(poti+1)
-					.arg(amount));
-			
-			tinfo->window->addServerMessage(smsg);
 		}
 		break;
 	case SnapPlayerShow:
@@ -1506,32 +1486,6 @@ int PBot::init()
 		}
 	}
 	
-	
-#ifndef NOAUDIO
-	// load sounds
-	struct sound {
-		unsigned int id;
-		const char *file;
-	} sounds[] = {
-		{ SOUND_TEST_1,		"audio/test.wav" },
-		{ SOUND_DEAL_1,		"audio/deal.wav" },
-		{ SOUND_CHIP_1,		"audio/chip1.wav" },
-		{ SOUND_CHIP_2,		"audio/chip2.wav" },
-		{ SOUND_CHECK_1,	"audio/check1.wav" },
-		{ SOUND_FOLD_1,		"audio/fold1.wav" },
-		{ SOUND_REMINDER_1,	"audio/reminder.wav" },
-	};
-	
-	const unsigned int sounds_count = sizeof(sounds) / sizeof(sounds[0]);
-	
-	for (unsigned int i=0; i < sounds_count; i++)
-	{
-		dbg_msg("audio", "Loading sound '%s' (%d)", sounds[i].file, sounds[i].id);
-		if (audio_load(sounds[i].id, sounds[i].file))
-			log_msg("audio", "Failed loading sound (%d)", sounds[i].id);
-	}
-#endif /* NOAUDIO */
-	
 #ifdef DEBUG
 	// set a random suffix, useful for debugging with multiple clients
 	if (config.getBool("dbg_name"))
@@ -1613,6 +1567,8 @@ ActionRet makePlay()
 
 void translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo)
 {
+	//TODO decide when we should make a play...
+
 
 	//first we have to decide what kind of snapshot this is so we can decided how to process it.
 	switch( snaptype ) {
@@ -1902,11 +1858,6 @@ int main(int argc, char **argv)
 	/*filetype *dbglog = */ file_reopen(dbgfile, mode_write, stderr);  // omit closing
 #endif
 	
-	// initialize SDL for audio
-#ifndef NOAUDIO
-	audio_init();
-#endif
-	
 	if (app.init())
 		return 1;
 	
@@ -1916,11 +1867,6 @@ int main(int argc, char **argv)
 	// close log-file
 	if (fplog)
 		file_close(fplog);
-	
-#ifndef NOAUDIO
-	// cleanup SDL
-	audio_deinit();
-#endif
 	
 	return retval;
 }
