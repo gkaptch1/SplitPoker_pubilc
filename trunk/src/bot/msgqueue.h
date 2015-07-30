@@ -76,6 +76,8 @@ struct StatusList
     int bb;
     int sb;
 
+    int my_seat;
+
 //    vector<Card> cards;
     // cards[0] and cards[1] are actually hole cards
     // cards[2], cards[3] and cards[4] are the flop
@@ -141,7 +143,7 @@ public:
 	/* setters for StatusList and EventList */
 	void setStatusStage(char s) 				{ status.stage = s; 						}
 	// I am aware this is shitty.  I dont want it clogging up the cpp file.
-	void setStatusStage(int i)					{ switch (i) { case 1: status.stage = 'p'; break; case 2: status.stage = 'f'; break; case 3: status.stage = 't'; break; case 4: status.stage = 'r'; break; case 5: status.stage = 's'; break;}}
+	void setStatusStage(int i)					{ switch (i) { case 0: status.stage = STAGE_PREFLOP; break; case 1: status.stage = STAGE_FLOP; break; case 2: status.stage = STAGE_TURN; break; case 3: status.stage = STAGE_RIVER; break; case 4: status.stage = STAGE_SHOWDOWN; break;}}
 	void setStatushandCount(int hc)				{ status.handcount = hc;					}
 	void setStatusExtraBet(int eb)				{ status.extrabet = eb;						}
 	void setStatusAllIns(int alls)				{ status.allins = alls;						}

@@ -1565,10 +1565,11 @@ ActionRet makePlay()
 	//retirn ai->makePlay();
 }
 
-void translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo)
+void PBot::translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo)
 {
 	//TODO decide when we should make a play...
-
+	//  SNAP 8:0 2 4:1 2:2:5:5:5 cc:Qc:Js:8d s2:16:1:1480:0:0:- s5:15:1:1480:0:0:-  p0:40 20 
+	//  <Type> <Gid>:<Tid> <SType> <State>:<BettingRound> <Dealer>:<SmallBlind>:<BigBlind>:<s_cur>:<LastBest> cc:<Flop:Card:s>:<Turn>:<River> <Seatinfo>
 
 	//first we have to decide what kind of snapshot this is so we can decided how to process it.
 	switch( snaptype ) {
@@ -1603,26 +1604,25 @@ void translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo)
 			tmp = t.getNext();
 			st.parse(tmp);
 
-			//TODO set msgqueues info about the last action at the table
 			msgqueue.setStatusDealer(st.getNextInt());
 			msgqueue.setStatusSmallBlind(st.getNextInt());
 			msgqueue.setStatusBigBlind(st.getNextInt());
-			/* 				//TODO last two instructions...
-			table.s_cur = st.getNextInt();
+			msgqueue.setStatusActive(st.getNextInt());
+			/*
+			//TODO figure out where this goes
 			table.s_lastbet = st.getNextInt();
 			*/
 			
 			// community-cards
 			{
 				std::string board = t.getNext().substr(3);
-				CommunityCards &cc = table.communitycards;
 				
 				Tokenizer ct(":");
 				ct.parse(board);
 				
 				if (ct.count() == 0)
-					cc.clear();
-				//TODO clear out the cards buffer in msgqueue
+					//cc.clear();
+					//TODO clear out the cards buffer in msgqueue
 				
 				if (ct.count() >= 3)
 				{
