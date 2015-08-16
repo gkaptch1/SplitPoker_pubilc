@@ -27,7 +27,7 @@
 #include "SysAccess.h"
 #include "ConfigParser.hpp"
 
-#include "Table.hpp"   // needed for reading snapshots // FIXME: should be all in protocol.h
+#include "Table.hpp"   // needed for reading snapshots // This lives in the server folder... for some reason...
 
 #include "pbot.hpp"
 
@@ -1138,13 +1138,6 @@ bool PBot::createGame(gamecreate *createinfo)
 	return true;
 }
 
-#if 0
-const gamelist_type& PBot::getGameList()
-{
-	return gamelist;
-}
-#endif
-
 gameinfo* PBot::getGameInfo(int gid)
 {
 	if (games.find(gid) != games.end())
@@ -1186,13 +1179,6 @@ int PBot::getMyCId()
 	return srv.cid;
 }
 
-#ifdef DEBUG
-void PBot::slotDbgRegister()
-{
-	const int gid = config.getInt("dbg_register");
-	doRegister(gid);
-}
-#endif
 
 void PBot::sendDebugMsg(const QString& msg)
 {
@@ -1213,11 +1199,6 @@ int PBot::netSendMsg(const char *msg)
 {
 	char buf[1024];
 	const int len = snprintf(buf, sizeof(buf), "%s\n", msg);
-	
-#ifdef DEBUG
-	if (config.getBool("dbg_srv_cmd"))
-		dbg_msg("netSendMsg", "req= %s", msg);
-#endif
 	
 	const int bytes = tcpSocket->write(buf, len);
 	
@@ -1325,6 +1306,19 @@ void PBot::netDisconnected()
 	gamelist.clear();
 }
 
+
+
+
+
+
+
+/******************** PROTOCOL HELPERS ***********************/
+
+
+
+
+
+
 void PBot::requestPlayerlist(int gid)
 {
 	char msg[256];
@@ -1367,28 +1361,20 @@ void PBot::requestGameinfo(int gid)
 	netSendMsg(msg);
 }
 
-bool PBot::isTableWindowRemaining()
-{
-	// FIXME: make use of QApplication::lastWindowClosed(), but Qt::WA_QuitOnClose flag needed for table-windows
-	
-	// check if there are open windows
-	for (games_type::iterator e = games.begin(); e != games.end(); e++)
-	{
-		tables_type &tables = e->second.tables;
-		for (tables_type::iterator t = tables.begin(); t != tables.end(); t++)
-		{
-			const tableinfo *table = &(t->second);
-			
-			if (table->window)
-			{
-				if (table->window->isVisible())
-					return true;
-			}
-		}
-	}
-	
-	return false;
-}
+
+
+
+
+
+/****************** CONFIG AND LOADERS *************************/
+
+
+
+
+
+
+
+
 
 PBot::PBot(int &argc, char **argv) : QApplication(argc, argv)
 {
@@ -1486,26 +1472,6 @@ int PBot::init()
 		}
 	}
 	
-#ifdef DEBUG
-	// set a random suffix, useful for debugging with multiple clients
-	if (config.getBool("dbg_name"))
-	{
-		srand(time(NULL));
-
-		char name[128];
-		snprintf(name, sizeof(name), "%s_%d",
-			config.get("player_name").c_str(),
-			(int)(rand() % 100));
-		config.set("player_name", name);
-	}
-#endif
-	
-	// main window
-	wMain = new WMain();
-	wMain->updateConnectionStatus();
-	wMain->show();
-	
-	
 	// automatically connect to default server
 	if (config.getBool("auto_connect"))
 	{
@@ -1518,12 +1484,6 @@ int PBot::init()
 	if (config.get("encoding").length())
 		QTextCodec::setCodecForCStrings(QTextCodec::codecForName(
 			config.get("encoding").c_str()));
-#endif
-
-#ifdef DEBUG
-	// automatically register to the game  (auto_connect must be set)
-	if (config.getInt("dbg_register") != -1)
-		QTimer::singleShot(1000, this, SLOT(slotDbgRegister()));
 #endif
 	
 	return 0;
@@ -1558,6 +1518,103 @@ bool config_load()
 	}
 	
 	return true;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/********************* STUFF WE ACTUALL CARE ABOUT *********************/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+int main(int argc, char **argv)
+{
+	log_set(stdout, 0);
+	
+	log_msg("main", "HoldingNuts PBot (version %d.%d.%d; svn %s; Qt version %s)",
+		VERSION_MAJOR, VERSION_MINOR, VERSION_REVISION,
+		VERSIONSTR_SVN,
+		qVersion());
+	
+	
+	// the app instance
+	PBot app(argc, argv);
+	
+	
+	// load config
+	config_load();
+	config.print();
+	
+	// start logging
+	filetype *fplog = NULL;
+	if (config.getBool("log"))
+	{
+		char logfile[1024];
+		snprintf(logfile, sizeof(logfile), "%s/client.log", sys_config_path());
+		fplog = file_open(logfile, mode_write);
+		
+		// log destination
+		log_set(stdout, fplog);
+		
+		// log timestamp
+		if (config.getBool("log_timestamp"))
+			log_use_timestamp(1);
+	}
+	
+#if defined(DEBUG) && defined(PLATFORM_WINDOWS)
+	char dbgfile[1024];
+	snprintf(dbgfile, sizeof(dbgfile), "%s/client.debug", sys_config_path());
+	/*filetype *dbglog = */ file_reopen(dbgfile, mode_write, stderr);  // omit closing
+#endif
+	
+	if (app.init())
+		return 1;
+	
+	int retval = app.exec();
+	
+	
+	// close log-file
+	if (fplog)
+		file_close(fplog);
+	
+	return retval;
 }
 
 ActionRet makePlay() 
@@ -1816,57 +1873,4 @@ void PBot::translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo
 			break;
 	}
 
-}
-
-int main(int argc, char **argv)
-{
-	log_set(stdout, 0);
-	
-	log_msg("main", "HoldingNuts PBot (version %d.%d.%d; svn %s; Qt version %s)",
-		VERSION_MAJOR, VERSION_MINOR, VERSION_REVISION,
-		VERSIONSTR_SVN,
-		qVersion());
-	
-	
-	// the app instance
-	PBot app(argc, argv);
-	
-	
-	// load config
-	config_load();
-	config.print();
-	
-	// start logging
-	filetype *fplog = NULL;
-	if (config.getBool("log"))
-	{
-		char logfile[1024];
-		snprintf(logfile, sizeof(logfile), "%s/client.log", sys_config_path());
-		fplog = file_open(logfile, mode_write);
-		
-		// log destination
-		log_set(stdout, fplog);
-		
-		// log timestamp
-		if (config.getBool("log_timestamp"))
-			log_use_timestamp(1);
-	}
-	
-#if defined(DEBUG) && defined(PLATFORM_WINDOWS)
-	char dbgfile[1024];
-	snprintf(dbgfile, sizeof(dbgfile), "%s/client.debug", sys_config_path());
-	/*filetype *dbglog = */ file_reopen(dbgfile, mode_write, stderr);  // omit closing
-#endif
-	
-	if (app.init())
-		return 1;
-	
-	int retval = app.exec();
-	
-	
-	// close log-file
-	if (fplog)
-		file_close(fplog);
-	
-	return retval;
 }

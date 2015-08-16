@@ -1,15 +1,15 @@
-#include_directories (
-#	${HOLDINGNUTS_SOURCE_DIR}/src
-#	${HOLDINGNUTS_SOURCE_DIR}/src/libpoker
-#	${HOLDINGNUTS_SOURCE_DIR}/src/system
-#	${HOLDINGNUTS_SOURCE_DIR}/src/server
-#	${HOLDINGNUTS_SOURCE_DIR}/src/client
-#	${HOLDINGNUTS_SOURCE_DIR}/src/bot
-#)
-#link_directories(
-#	${HOLDINGNUTS_SOURCE_DIR}/src/libpoker
-#	${HOLDINGNUTS_SOURCE_DIR}/src/system
-#)
+include_directories (
+	${HOLDINGNUTS_SOURCE_DIR}/src
+	${HOLDINGNUTS_SOURCE_DIR}/src/libpoker
+	${HOLDINGNUTS_SOURCE_DIR}/src/system
+	${HOLDINGNUTS_SOURCE_DIR}/src/server
+	${HOLDINGNUTS_SOURCE_DIR}/src/client
+	${HOLDINGNUTS_SOURCE_DIR}/src/bot
+)
+link_directories(
+	${HOLDINGNUTS_SOURCE_DIR}/src/libpoker
+	${HOLDINGNUTS_SOURCE_DIR}/src/system
+)
 
 #IF (WIN32)
 #	IF (MINGW)
@@ -25,67 +25,57 @@
 #		# FIXME: use VC resource compiler rc.exe
 #	ENDIF (MINGW)
 #ENDIF (WIN32)
-#
 
-## use SDL only for audio
-#if (ENABLE_AUDIO)
-#	Find_Package ( SDL REQUIRED )
 
-#	include_directories ( ${SDL_INCLUDE_DIR} )
-#	
-#	LIST (APPEND aux_src Audio.c)
-#	LIST (APPEND aux_lib ${SDL_LIBRARY})
-#else (ENABLE_AUDIO)
-#	add_definitions (-DNOAUDIO=1)
-#endif (ENABLE_AUDIO)
+SET( QT_USE_QTNETWORK true )
 
-#SET( QT_USE_QTNETWORK true )
+Find_Package ( Qt4 REQUIRED )
 
-#Find_Package ( Qt4 REQUIRED )
+INCLUDE(${QT_USE_FILE})#
 
-## http://www.qtforum.org/article/26305/problem-running-configure-to-install-qt.html#
+SET(QtApp_RCCS pclient.qrc)#
 
-#INCLUDE(${QT_USE_FILE})#
-#
-
-#SET(QtApp_RCCS pclient.qrc)#
-
-#QT4_ADD_RESOURCES(QtApp_RCC_SRCS ${QtApp_RCCS})#
+QT4_ADD_RESOURCES(QtApp_RCC_SRCS ${QtApp_RCCS})#
 
 ## Warning: older CMake versions (2.6-patch-0) do not provide moc-qt4 with preprocessor definitions
-#QT4_WRAP_CPP (
-#	sources_MOC
-#	pclient.hpp WMain.hpp SettingsDialog.hpp CreateGameDialog.hpp
-#	AboutDialog.hpp GameListTableModel.hpp PlayerListTableModel.hpp GameListSortFilterProxyModel.hpp
-#	WTable.hpp ChatBox.hpp DealerButton.hpp Seat.hpp EditableSlider.hpp TimeOut.hpp
-#)
+QT4_WRAP_CPP (
+	sources_MOC
+	pbot.hpp 
+	HoldemTournamentAI.h PlayerHoleCards.h PlayerStats.h
+	WTable.hpp
+	main.h
+	msgqueue.h
+	resource.h
+	stdafx.h
+)
 
-#add_executable (
-#	holdingnuts
-#	WIN32    # when building for windows: do not show the console window
-#	pbot.cpp ${aux_obj}
-#	WMain.cpp SettingsDialog.cpp CreateGameDialog.cpp AboutDialog.cpp
-#	GameListTableModel.cpp PlayerListTableModel.cpp GameListSortFilterProxyModel.cpp
-#	WTable.cpp ChatBox.cpp DealerButton.cpp Seat.cpp SeatImages.cpp EditableSlider.cpp TimeOut.cpp
-#	${aux_src}
-#	${sources_MOC} ${QtApp_RCC_SRCS}
-#)
+add_executable (
+	holdingnutsbot
+	WIN32    # when building for windows: do not show the console window
+	pbot.cpp ${aux_obj}
+	CompilePlayerStats.cpp GameController.cpp HoldemTournamentAI.cpp HoldemTournamentAIBase.cpp
+	HoldemTournamentAIManual.cpp MsgQueue.cpp MsgQueueBase.cpp PlayerHoleCards.cpp
+	PlayerStats.cpp PokerPirate.cpp WTable.cpp main.cpp stdafx.cpp
+	${aux_src}
+	${sources_MOC} ${QtApp_RCC_SRCS}
 
-#target_link_libraries (
-#   holdingnuts
-#   Poker SysAccess System
-#   ${QT_LIBRARIES}
-#   ${aux_lib}
-#)
+)
 
-#INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/holdingnutsbot DESTINATION
-#	${CMAKE_INSTALL_PREFIX}/bin)
+target_link_libraries (
+   holdingnuts
+   Poker SysAccess System
+   ${QT_LIBRARIES}
+   ${aux_lib}
+)
+
+INSTALL(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/holdingnutsbot DESTINATION
+	${CMAKE_INSTALL_PREFIX}/bin)
 
 ##############################################################
 
 ## data-directory
-#INSTALL(DIRECTORY ${HOLDINGNUTS_SOURCE_DIR}/data DESTINATION
-#	${CMAKE_DATA_PATH}/holdingnuts)
+INSTALL(DIRECTORY ${HOLDINGNUTS_SOURCE_DIR}/data DESTINATION
+	${CMAKE_DATA_PATH}/holdingnuts)
 
 ##############################################################
 
