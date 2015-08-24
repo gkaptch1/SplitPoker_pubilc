@@ -28,6 +28,7 @@
 #include "ConfigParser.hpp"
 
 #include "Table.hpp"   // needed for reading snapshots // This lives in the server folder... for some reason...
+#include "Player.hpp"
 
 #include "pbot.hpp"
 
@@ -1620,6 +1621,150 @@ int main(int argc, char **argv)
 ActionRet makePlay() 
 {
 	//retirn ai->makePlay();
+	return NULL;
+}
+
+//Not making this a constructor because i dont want to import Card.hpp in Card.hpp
+BotCard CardToBotCard(Card c) {
+
+	Card::Face face = c.getFace();
+	Card::Suit suit = c.getSuit();
+
+	char suitletter;
+	char faceletter;
+
+	switch(face)
+	{
+		case Card::Clubs
+			suitletter='c';
+			break;
+		case Card::Diamonds
+			suitletter='d';
+			break;
+		case Card::Hearts
+			suitletter='h';
+			break;
+		case Card::Spades
+			suitletter='s';
+			break;
+	}
+
+	switch(suit)
+	{
+		case Card::Two:
+			faceletter='2';
+			break;
+		case Card::Three:
+			faceletter='3';
+			break;
+		case Card::Four:
+			faceletter='4';
+			break;
+		case Card::Five:
+			faceletter='5';
+			break;
+		case Card::Six:
+			faceletter='6';
+			break;
+		case Card::Seven:
+			faceletter='7';
+			break;
+		case Card::Eight:
+			faceletter='8';
+			break;
+		case Card::Nine:
+			faceletter='9';
+			break;
+		case Card::Ten:
+			faceletter='0';
+			break;
+		case Card::Jack:
+			faceletter='j';
+			break;
+		case Card::Queen:
+			faceletter='q';
+			break;
+		case Card::King:
+			faceletter='k';
+			break;
+		case Card::Ace:
+			faceletter='a';
+			break;
+	}
+
+	BotCard toReturn(faceletter, suitletter);
+	return toReturn;
+}
+
+Card BotCardToCard(Botcard bc) {
+
+	char bcrank = bc.getIndex();
+	char bcsuit = bc.getSuit();
+
+	Card::Face face;
+	Card::Suit suit;
+
+	switch(face)
+	{
+        case '2':
+        	face = Card::Two;
+        	break;
+        case '3':
+        	face = Card::Three;
+        	break;
+        case '4':
+        	face = Card::Four;
+        	break;
+        case '5':
+        	face = Card::Five;
+        	break;
+        case '6':
+        	face = Card::Six;
+        	break;
+        case '7':
+        	face = Card::Seven;
+        	break;
+        case '8':
+        	face = Card::Eight;
+        	break;
+        case '9':
+        	face = Card::Nine;
+        	break;
+        case '0':
+        	face = Card::Ten;
+        	break;
+        case 'J':
+        	face = Card::Jack;
+        	break;
+        case 'Q':
+        	face = Card::Queen;
+        	break;
+        case 'K':
+        	face = Card::King;
+        	break;
+        case 'A':
+        	face = Card::Ace;
+        	break;
+	}
+
+	switch(bcsuit)
+	{	
+		case 'c':
+			suit = Card::Clubs;
+			break;
+		case 'd':
+			suit = Card::Diamonds;
+			break;
+		case 'h':
+			suit = Card::Hearts;
+			break;
+		case 's':
+			suit = Card::Spades;
+			break;
+	}
+
+	Card toReturn(face, suit);
+	return toReturn;
 }
 
 void PBot::translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo)
@@ -1629,13 +1774,17 @@ void PBot::translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo
 	//  <Type> <Gid>:<Tid> <SType> <State>:<BettingRound> <Dealer>:<SmallBlind>:<BigBlind>:<s_cur>:<LastBest> cc:<Flop:Card:s>:<Turn>:<River> <Seatinfo>
 
 	//first we have to decide what kind of snapshot this is so we can decided how to process it.
+
 	switch( snaptype ) {
 		case SnapGameState:
+		{
 			//these announce a change in the game state.  ie: New Game, New Hand, etc...
 			snap_gamestate_type gamestate_type = (snap_gamestate_type) t.getNextInt();
 
 			break;
+		}
 		case SnapTable:
+		{
 			//updates when something changes in the state of the table 
 			if (!tinfo)
 				return;
@@ -1747,7 +1896,7 @@ void PBot::translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo
 				si.action = (Player::PlayerAction) st.getNextInt();
 
 				//Checking to see if the current player is sitting at the table and has not yet folded.
-				if (si.in_round && si.action != Player::PlayerAction::Fold && si.action != Player::PlayerAction::Sitout)
+				if (si.in_round && si.action != Player::Fold && si.action != Player::Sitout)
 					living_players++;
 				
 				std::string shole = st.getNext();
@@ -1788,8 +1937,10 @@ void PBot::translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo
 				tmp = t.getNext();
 			} while (tmp[0] == 'p');				
 			break;
+		}
 		case SnapCards:
 
+		{
 			snap_cards_type type = (snap_cards_type) t.getNextInt();
 	
 			if (type == SnapCardsHole)
@@ -1821,11 +1972,13 @@ void PBot::translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo
 					msgqueue.setStatusRiverCard(card1);
 			}
 			break;
+		}
 		case SnapWinPot:
 		case SnapOddChips:
 			// These two seem to be the same and just log a message... the bot doesn't care about results.
 			break;
 		case SnapPlayerAction:
+		{
 			//TODO This message gets sent out every time something happens. The last action field on msgqueue.status should be updated
 					const snap_playeraction_type actiontype = (snap_playeraction_type) t.getNextInt();
 					const unsigned int cid = t.getNextInt();
@@ -1861,6 +2014,7 @@ void PBot::translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo
 					}
 					
 			break;
+		}
 		case SnapPlayerCurrent:
 			//Hey! its our turn.  We should probably make a play...
 			//Currently the server never seems to send this option... can be turned on.

@@ -130,12 +130,20 @@ public:
 	virtual int totalCashOnTable()				= 0;
 	virtual int GetNameIndexTrue(int n)			= 0;
 
-    virtual int DoCheck()						= 0;
-    virtual int DoCall()						= 0;
-    virtual int DoRaise()						= 0;
-    virtual int DoBet()							= 0;
-    virtual int DoBet(int num)					= 0;
-    virtual int DoFold()						= 0;
+/* TODO Stuff that should be implemented so we can do actions.  Should link through pbot.cpp */
+	int DoCheck()					{return 0;}
+	int DoCall()					{return 0;}
+	int DoRaise()					{return 0;}
+	int DoBet()					{return 0;}
+	int DoBet(int num)			{return 0;}	
+	int DoFold()					{return 0;}
+
+//    virtual int DoCheck()						= 0;
+//    virtual int DoCall()						= 0;
+//    virtual int DoRaise()						= 0;
+//    virtual int DoBet()							= 0;
+//    virtual int DoBet(int num)					= 0;
+//    virtual int DoFold()						= 0;
 
 	/* display */
 	ostream& cur(int x, int y);
@@ -153,7 +161,7 @@ public:
 	void setStatusLivingPlayers(int lp)			{ status.livingplayers = lp;				}
 	void setStatusDealer(int dlr)				{ status.dealer = dlr;						}
 	void setStatusBigBlind(int blind)			{ status.bb = blind;						} 
-	void setStatusSmallBline(int blind)			{ status.sb = blind;						}
+	void setStatusSmallBlind(int blind)			{ status.sb = blind;						}
 
 	void setStatusHoleCards(BotCard c1, BotCard c2)   { setCard(c1, 0); setCard(c2,1);			}
 	void setStatusFlopCards(BotCard c1, BotCard c2, BotCard c3) {setCard(c1, 2); setCard(c2,3); setCard(c3,4);}
