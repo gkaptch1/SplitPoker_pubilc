@@ -243,23 +243,23 @@ void PBot::serverCmdSnapTable(Tokenizer &t, int gid, int tid, tableinfo* tinfo)
 		
 		if (ct.count() >= 3)
 		{
-			Card cf1(ct.getNext().c_str());
-			Card cf2(ct.getNext().c_str());
-			Card cf3(ct.getNext().c_str());
+			Card  cf1(ct.getNext().c_str());
+			Card  cf2(ct.getNext().c_str());
+			Card  cf3(ct.getNext().c_str());
 			
 			cc.setFlop(cf1, cf2, cf3);
 		}
 		
 		if (ct.count() >= 4)
 		{
-			Card ct1(ct.getNext().c_str());
+			Card  ct1(ct.getNext().c_str());
 			
 			cc.setTurn(ct1);
 		}
 		
 		if (ct.count() == 5)
 		{
-			Card cr1(ct.getNext().c_str());
+			Card  cr1(ct.getNext().c_str());
 			
 			cc.setRiver(cr1);
 		}
@@ -303,8 +303,8 @@ void PBot::serverCmdSnapTable(Tokenizer &t, int gid, int tid, tableinfo* tinfo)
 		std::string shole = st.getNext();
 		if (shole.length() == 4)
 		{
-			Card h1(shole.substr(0, 2).c_str());
-			Card h2(shole.substr(2, 2).c_str());
+			Card  h1(shole.substr(0, 2).c_str());
+			Card  h2(shole.substr(2, 2).c_str());
 			si.holecards.setCards(h1, h2);
 			
 			// if there are hole-cards in the snapshot
@@ -424,8 +424,8 @@ void PBot::serverCmdSnapCards(Tokenizer &t, int gid, int tid, tableinfo* tinfo)
 		HoleCards &h = tinfo->holecards;
 		std::string card1 = t.getNext();
 		std::string card2 = t.getNext();
-		Card ch1(card1.c_str());
-		Card ch2(card2.c_str());
+		Card  ch1(card1.c_str());
+		Card  ch2(card2.c_str());
 		
 		h.setCards(ch1, ch2);
 		
@@ -668,7 +668,7 @@ void PBot::serverCmdSnap(Tokenizer &t)
 	translate_hn_to_pp_state(t, snap, tinfo);
 
 	//TODO hook in the AI decision here
-	if (tinfo->s_cur == tinfo->my_seat) 
+	if (tinfo->snap.s_cur == tinfo->snap.my_seat) 
 	{
 		//lets make a decision from the AI only if its our turn
 		ActionRet action = makePlay();
@@ -1683,9 +1683,9 @@ void PBot::translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo
 				
 				if (ct.count() >= 3)
 				{
-					Card cf1(ct.getNext().c_str());
-					Card cf2(ct.getNext().c_str());
-					Card cf3(ct.getNext().c_str());
+					BotCard  cf1(ct.getNext().c_str());
+					BotCard  cf2(ct.getNext().c_str());
+					BotCard  cf3(ct.getNext().c_str());
 					
 					//TODO translate cards
 					msgqueue.setStatusFlopCards(cf1, cf2, cf3);
@@ -1693,7 +1693,7 @@ void PBot::translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo
 				
 				if (ct.count() >= 4)
 				{
-					Card ct1(ct.getNext().c_str());
+					BotCard  ct1(ct.getNext().c_str());
 					
 					//TODO translate cards
 					msgqueue.setStatusTurnCard(ct1);
@@ -1701,7 +1701,7 @@ void PBot::translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo
 				
 				if (ct.count() == 5)
 				{
-					Card cr1(ct.getNext().c_str());
+					BotCard  cr1(ct.getNext().c_str());
 					
 					//TODO translate cards
 					msgqueue.setStatusRiverCard(cr1);
@@ -1753,8 +1753,8 @@ void PBot::translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo
 				std::string shole = st.getNext();
 				if (shole.length() == 4)
 				{
-					Card h1(shole.substr(0, 2).c_str());
-					Card h2(shole.substr(2, 2).c_str());
+					BotCard h1(shole.substr(0, 2).c_str());
+					BotCard h2(shole.substr(2, 2).c_str());
 					si.holecards.setCards(h1, h2);
 					// if there are hole-cards in the snapshot
 					// then there's no further action possible
@@ -1798,10 +1798,10 @@ void PBot::translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo
 				HoleCards &h = tinfo->holecards;
 				std::string card1 = t.getNext();
 				std::string card2 = t.getNext();
-				Card ch1(card1.c_str());
-				Card ch2(card2.c_str());
+				BotCard  ch1(card1.c_str());
+				BotCard  ch2(card2.c_str());
 				
-				msgqueue.setStatusHoleCards(cf1, cf2);
+				msgqueue.setStatusHoleCards(ch1, ch2);
 			}
 			else if (type == SnapCardsFlop || type == SnapCardsTurn || type == SnapCardsRiver)
 			{
@@ -1827,35 +1827,35 @@ void PBot::translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo
 			break;
 		case SnapPlayerAction:
 			//TODO This message gets sent out every time something happens. The last action field on msgqueue.status should be updated
-					const snap_playeraction_type type = (snap_playeraction_type) t.getNextInt();
+					const snap_playeraction_type actiontype = (snap_playeraction_type) t.getNextInt();
 					const unsigned int cid = t.getNextInt();
 					
 					const QString player_name = getPlayerName(cid);
 					
 					QString smsg;
-					if (type == SnapPlayerActionFolded)
+					if (actiontype == SnapPlayerActionFolded)
 					{
 					}
-					else if (type == SnapPlayerActionChecked)
+					else if (actiontype == SnapPlayerActionChecked)
 					{
 					}
 					
 					const chips_type amount = t.getNextInt();
 					unsigned int sound = SOUND_CHIP_2;
 					
-					if (type == SnapPlayerActionCalled)
+					if (actiontype == SnapPlayerActionCalled)
 					{
 
 					}
-					else if (type == SnapPlayerActionBet)
+					else if (actiontype == SnapPlayerActionBet)
 					{
 
 					}
-					else if (type == SnapPlayerActionRaised)
+					else if (actiontype == SnapPlayerActionRaised)
 					{
 
 					}
-					else if (type == SnapPlayerActionAllin)
+					else if (actiontype == SnapPlayerActionAllin)
 					{
 
 					}

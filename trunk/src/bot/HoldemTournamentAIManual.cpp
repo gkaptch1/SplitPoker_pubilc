@@ -221,10 +221,10 @@ TableTexture HoldemTournamentAIManual::evalTexture(bool debug)
 		cout << " pos: "		<< ret.activebefore << " + " << ret.activeafter << " = " << ret.totalaction << endl;
 		cout << endl;
 		
-		cout << "dangerCard: "  << ret.dangercard << endl;
+		cout << "dangerCard: "  << ret.dangerBotCard<< endl;
 		cout << " flush++: "    << ret.flushscare << endl;
 		cout << " straight++: " << ret.straightscare << endl;
-		cout << " overcard: "   << ret.overcard << endl;
+		cout << " overcard: "   << ret.overBotCard<< endl;
 		cout << endl;
 	}
 
@@ -239,7 +239,7 @@ ActionRet HoldemTournamentAIManual::pfLimp(const TableTexture& t, bool debug)
 	ret.action=FOLD;
 	ret.amt=0;
 	
-	profile_line(" -- pfLimp() -- ");
+	////profile_line (" -- pfLimp() -- ");
 	string debugstr="";
 	PokerHand h=table->getHand();
 
@@ -295,7 +295,7 @@ ActionRet HoldemTournamentAIManual::pfBlindSteal(const TableTexture& t, bool deb
 	ret.action=FOLD;
 	ret.amt=0;
 
-	profile_line(" -- pfBlindSteal() -- ");
+	//profile_line (" -- pfBlindSteal() -- ");
 
 	PokerHand h=table->getHand();
 
@@ -345,7 +345,7 @@ ActionRet HoldemTournamentAIManual::pfValuePlay(const TableTexture& t, bool debu
 	ret.action=FOLD;
 	ret.amt=0;
 
-	profile_line(" -- pfValuePlay -- ");
+	//profile_line (" -- pfValuePlay -- ");
 
 	bool agg=false,
 		valCall=false;
@@ -412,7 +412,7 @@ ActionRet HoldemTournamentAIManual::pfAlspachMethod(const TableTexture& t, bool 
 	ret.action=FOLD;
 	ret.amt=0;
 
-	profile_line(" -- pfAlspachMethod -- ");
+	//profile_line (" -- pfAlspachMethod -- ");
 
 	/* build ranking lists */
 
@@ -427,7 +427,7 @@ ActionRet HoldemTournamentAIManual::headsUp(const TableTexture& t, bool debug)
 	ret.action=FOLD;
 	ret.amt=0;
 
-	profile_line(" -- headsUp() -- ");
+	//profile_line (" -- headsUp() -- ");
 
 	if (table->getPlayersAlive()==2&&table->getBB()>=320) {
 		ret.action=BET;
@@ -445,7 +445,7 @@ ActionRet HoldemTournamentAIManual::chaseDraws(const TableTexture& t, bool debug
 	ret.action=FOLD;
 	ret.amt=0;
 	
-	profile_line(" -- chaseDraws() -- ");
+	//profile_line (" -- chaseDraws() -- ");
 
 	bool chasedraw=false;
 	if (t.flushdraw&&table->getPotOdds(table->getCostToCall(getAIPlayer()))>4) chasedraw=true;
@@ -478,7 +478,7 @@ ActionRet HoldemTournamentAIManual::checkSteal(const TableTexture& t, bool debug
 	ret.action=FOLD;
 	ret.amt=0;
 
-	profile_line(" -- checkSteal() -- ");
+	//profile_line (" -- checkSteal() -- ");
 
 	bool stealpos=(table->getPlayersActive()<=3)&&(table->getPositionAfterActive(getAIPlayer())==0);
 
@@ -519,7 +519,7 @@ ActionRet HoldemTournamentAIManual::continueBet(const TableTexture& t, bool debu
 	ret.action=FOLD;
 	ret.amt=0;
 	
-	profile_line(" -- continueBet() -- ");
+	//profile_line (" -- continueBet() -- ");
 
 	bool continueCards=(t.facecards<=1);
 	bool noAction=getTotalRaises()==0;
@@ -551,7 +551,7 @@ ActionRet HoldemTournamentAIManual::probeBet(const TableTexture& t, bool debug)
 	ret.action=FOLD;
 	ret.amt=0;
 
-	profile_line(" -- probeBet() -- ");
+	//profile_line (" -- probeBet() -- ");
 
 	PokerHand tmpHand=table->getBoard(),
 		h=table->getHand();
@@ -560,7 +560,7 @@ ActionRet HoldemTournamentAIManual::probeBet(const TableTexture& t, bool debug)
 	bool noAction=(getTotalRaises()==0);
 	bool headsUp=(table->getPlayersActive()<=2);
 	while (tmpHand.size()>0) {
-		Card tmp=tmpHand.HighCard();
+		BotCardtmp=tmpHand.HighCard();
 		if (tmp.GetRank()==h[0].GetRank()) poorHand=true;
 		if (tmp.GetRank()==h[1].GetRank()) poorHand=true;
 	}
@@ -601,7 +601,7 @@ ActionRet HoldemTournamentAIManual::valuePlay(const TableTexture& t, bool debug)
 	bool valuebet=false,
 		slowplay=false;
 
-	profile_line(" -- valuePlay() -- ");
+	//profile_line (" -- valuePlay() -- ");
 	
 	/* adjust for flush probs *********/
 	bool flushAce=false;
@@ -616,15 +616,15 @@ ActionRet HoldemTournamentAIManual::valuePlay(const TableTexture& t, bool debug)
 
 	/* eval cards *********************/
 	if (!t.trips&&!t.pair) {
-		profile_line("Simple Board");
+		//profile_line ("Simple Board");
 		tmpHand=table->getBoard();
-		Card boardHigh=tmpHand.HighCard();
+		BotCardboardHigh=tmpHand.HighCard();
 		if (h[0].GetRank()==boardHigh.GetRank()||h[1].GetRank()==boardHigh.GetRank()) toggleVar(medHand); // Top Pair
 		if (h[0].GetRank()==h[1].GetRank()&&h[0].GetRank()>boardHigh.GetRank())       toggleVar(medHand); // Over Pair
 		tmpHand=table->getBoard()+table->getHand();
-		Card trip=tmpHand.Trip();
-		Card p1=tmpHand.Pair();
-		Card p2=tmpHand.Pair();
+		BotCardtrip=tmpHand.Trip();
+		BotCardp1=tmpHand.Pair();
+		BotCardp2=tmpHand.Pair();
 		if (trip!=NOCARD||(p1!=NOCARD&&p2!=NOCARD)) {
 			toggleVar(goodHand);
 		}
@@ -642,11 +642,11 @@ ActionRet HoldemTournamentAIManual::valuePlay(const TableTexture& t, bool debug)
 		}
 	}
 	else if (!t.trips) {
-		profile_line("Pair Board");
+		//profile_line ("Pair Board");
 		tmpHand=table->getBoard();
-		Card pair=tmpHand.Pair();
-		Card pair2=tmpHand.Pair();
-		Card loneCard=tmpHand.HighCard();
+		BotCardpair=tmpHand.Pair();
+		BotCardpair2=tmpHand.Pair();
+		BotCardloneCard=tmpHand.HighCard();
 		if (loneCard.GetRank()==h[0].GetRank()||loneCard.GetRank()==h[1].GetRank()) toggleVar(medHand); // Board two Pair
 		if (h[0].GetRank()==h[1].GetRank()&&h[0].GetRank()>loneCard.GetRank()) toggleVar(medHand); // Over Pair
 		if (h[0].GetRank()==pair.GetRank() ||h[1].GetRank()==pair.GetRank()||
@@ -665,7 +665,7 @@ ActionRet HoldemTournamentAIManual::valuePlay(const TableTexture& t, bool debug)
 		}
 	}
 	else {
-		profile_line("Weird Board");
+		//profile_line ("Weird Board");
 		tmpHand=table->getBoard()+table->getHand();
 		if (flush||(tmpHand.Trip()!=NOCARD&&tmpHand.Pair()!=NOCARD)) toggleVar(goodHand);
 		if (tmpHand.Quad()!=NOCARD) toggleVar(nutzHand);

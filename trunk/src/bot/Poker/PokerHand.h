@@ -6,7 +6,7 @@
 #include <vector>
 #include "card.h"
 
-class Card;
+class BotCard;
 
 using namespace std;
 
@@ -15,37 +15,37 @@ using namespace std;
 class PokerHand
 {
 private:
-	vector<Card> hand;
+	vector<BotCard> hand;
 
 	void delCard(int n);
 
 public:
 	PokerHand();
-	PokerHand(const Card& c);
+	PokerHand(const BotCard& c);
 
 	void print() const;
 	const string toString() const;
 
 	void clear()					{ hand.clear(); }
 	void pop_back()					{ hand.pop_back(); }
-	void push_back(const Card& c)	{ hand.push_back(c); }
+	void push_back(const BotCard& c)	{ hand.push_back(c); }
 
 	vector<PokerHand> GetCombinations(int combSize);
 
 	double WinPercent(PokerHand& board, int cardsLeft);
 
-	Card HighCard();
-	Card Pair();
-	Card Trip();
-	Card Quad();
-	Card Straight(int n=5);
+	BotCard HighCard();
+	BotCard Pair();
+	BotCard Trip();
+	BotCard Quad();
+	BotCard Straight(int n=5);
 	PokerHand Flush();
 	bool isFlush(int n=5);
 	
 	static bool lessThan(PokerHand h1, PokerHand h2);
 	static bool lessThanFast(PokerHand h1, PokerHand h2);
 
-	Card  operator [] (const int i) const;
+	BotCard  operator [] (const int i) const;
 //	Card& operator [] (const int i);
 
 	const bool isEmpty() const								{ return (hand.size()==0); }

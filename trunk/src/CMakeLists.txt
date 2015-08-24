@@ -89,6 +89,10 @@ IF (ENABLE_CLIENT)
 	add_subdirectory (client)
 ENDIF (ENABLE_CLIENT)
 
+IF (ENABLE_BOT)
+	add_subdirectory (bot)
+ENDIF (ENABLE_BOT)
+
 # test utils
 IF (ENABLE_TEST)
 	add_subdirectory (test)

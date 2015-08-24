@@ -8,6 +8,7 @@ option (ENABLE_AUDIO	"Configure client with audio"	Off)
 option (ENABLE_SERVER	"Configure for server"		On)
 option (ENABLE_TEST	"Configure for test-utils"	Off)
 option (ENABLE_DEBUG	"Configure for debug-build"	Off)
+option (ENABLE_BOT	"Configure for Bots"	On)
 
 option (USE_SVNREV "Include the svn-revision in build" Off)
 option (UPDATE_TRANSLATIONS "Update source translations" Off)

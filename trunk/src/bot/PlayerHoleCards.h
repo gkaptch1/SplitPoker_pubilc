@@ -3,10 +3,9 @@
 
 /* #includes ******************************************************************/
 
-#include "../poker/poker.h"
-#include "main.h"
+#include "Poker/poker.h"
 #include <vector>
-#include <windows.h>
+//#include <windows.h>
 
 using namespace std;
 
@@ -26,17 +25,8 @@ public:
 			if ((*this)[i].h.eq(h)) {
 				return i;
 			}
-			/*			bool eq=true;
-			for (unsigned int j=0; j<(*this)[i].h.size()&&j<h.size(); j++) {
-				if ((*this)[i].h.eq(h)) {
-					eq=false;
-				}
-			}
-			if (eq) return i;
-*/		}
 
-//		cout << "[[[[[[[[[[[[[[[[[[" << endl;
-//		h.print(); cout << endl;
+		}
 
 		return (int)size();
 	}
@@ -67,8 +57,6 @@ public:
 	PlayerHoleCards& operator |= (PlayerHoleCards);
 	PlayerHoleCards& operator |= (int);
 
-	void print()				{ print(0,0,CUR_WHITE,true); }
-	void print(int x, int y)	{ print(x,y,CUR_WHITE,true); }
 	void print(int x, int y, int c, bool bw);
 
 	static HandRankings LoadHandRankings(char* str);
@@ -84,11 +72,11 @@ public:
 	int getNumHands();
 	int getNumHandsAbs();
 	int getNumHandsWonAbs();
-	int GetHand(Card c1, Card c2);
+	int GetHand(BotCard c1, BotCard c2);
 	int GetHand(char c1, char c2, bool suited);
-	void setHandValid(Card c1, Card c2, int mask=PHC_VALID);
+	void setHandValid(BotCard c1, BotCard c2, int mask=PHC_VALID);
 	void setHandValid(char c1, char c2, bool suited, int mask=PHC_VALID);
-	void setHandInvalid(Card c1, Card c2);
+	void setHandInvalid(BotCard c1, BotCard c2);
 	void setHandInvalid(char c1, char c2, bool suited);
 
 };

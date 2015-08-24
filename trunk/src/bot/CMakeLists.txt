@@ -33,7 +33,7 @@ Find_Package ( Qt4 REQUIRED )
 
 INCLUDE(${QT_USE_FILE})#
 
-SET(QtApp_RCCS pclient.qrc)#
+#SET(QtApp_RCCS pclient.qrc)
 
 QT4_ADD_RESOURCES(QtApp_RCC_SRCS ${QtApp_RCCS})#
 
@@ -42,11 +42,7 @@ QT4_WRAP_CPP (
 	sources_MOC
 	pbot.hpp 
 	HoldemTournamentAI.h PlayerHoleCards.h PlayerStats.h
-	WTable.hpp
-	main.h
-	msgqueue.h
-	resource.h
-	stdafx.h
+	msgqueue.h resource.h
 )
 
 add_executable (
@@ -55,14 +51,14 @@ add_executable (
 	pbot.cpp ${aux_obj}
 	CompilePlayerStats.cpp GameController.cpp HoldemTournamentAI.cpp HoldemTournamentAIBase.cpp
 	HoldemTournamentAIManual.cpp MsgQueue.cpp MsgQueueBase.cpp PlayerHoleCards.cpp
-	PlayerStats.cpp PokerPirate.cpp WTable.cpp main.cpp stdafx.cpp
+	PlayerStats.cpp PokerPirate.cpp
 	${aux_src}
 	${sources_MOC} ${QtApp_RCC_SRCS}
 
 )
 
 target_link_libraries (
-   holdingnuts
+   holdingnutsbot
    Poker SysAccess System
    ${QT_LIBRARIES}
    ${aux_lib}
@@ -78,24 +74,3 @@ INSTALL(DIRECTORY ${HOLDINGNUTS_SOURCE_DIR}/data DESTINATION
 	${CMAKE_DATA_PATH}/holdingnuts)
 
 ##############################################################
-
-## translations#
-
-##http://www.cmake.org/Wiki/CMake:How_To_Build_Qt4_Software
-##http://doc.trolltech.com/4.3/i18n.html
-
-#file (GLOB TRANSLATIONS_FILES translations/*.ts)
-
-#file (GLOB SRC_FILES *.cpp *.hpp)
-#set (FILES_TO_TRANSLATE ${SRC_FILES})
-
-#if (UPDATE_TRANSLATIONS)
-#  qt4_create_translation(QM_FILES ${FILES_TO_TRANSLATE} ${TRANSLATIONS_FILES})
-#else (UPDATE_TRANSLATIONS)
-#  qt4_add_translation(QM_FILES ${TRANSLATIONS_FILES})
-#endif (UPDATE_TRANSLATIONS) 
-
-#add_custom_target (translations ALL DEPENDS ${QM_FILES})
-
-#install(FILES ${QM_FILES} DESTINATION	
-#	${CMAKE_DATA_PATH}/holdingnuts/data/i18n)

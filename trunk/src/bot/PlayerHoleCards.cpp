@@ -265,7 +265,7 @@ int PlayerHoleCards::getNumHandsWonAbs()
 }
 
 /* PlayerHoleCards::GetHand() *************************************************/
-int PlayerHoleCards::GetHand(Card c1, Card c2)
+int PlayerHoleCards::GetHand(BotCardc1, BotCardc2)
 {
 	if (hand[c1.GetRank()][c2.GetRank()]&PHC_VALID||
 		hand[c2.GetRank()][c1.GetRank()]&PHC_VALID) return 1;
@@ -304,7 +304,7 @@ int PlayerHoleCards::GetHand(char c1, char c2, bool suited)
 }
 
 /* PlayerHoleCards::setHandValid() ********************************************/
-void PlayerHoleCards::setHandValid(Card c1, Card c2, int mask)
+void PlayerHoleCards::setHandValid(BotCardc1, BotCardc2, int mask)
 {
 	if (c1.GetRank()>=13||c1.GetRank()<0||c2.GetRank()>=13||c2.GetRank()<0) {
 		cout << "err";
@@ -338,7 +338,7 @@ void PlayerHoleCards::setHandValid(char c1, char c2, bool suited, int mask)
 }
 
 /* PlayerHoleCards::setHandInvalid() ******************************************/
-void PlayerHoleCards::setHandInvalid(Card c1, Card c2)
+void PlayerHoleCards::setHandInvalid(BotCardc1, BotCardc2)
 {
 	if (c1.GetRank()>13||c1.GetRank()<0||c2.GetRank()>13||c2.GetRank()<0) {
 		cout << "err";

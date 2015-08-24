@@ -5,7 +5,7 @@
 
 #include <vector>
 #include <iostream>
-#include "../poker/Card.h"
+#include "Poker/Card.h"
 #include "playerstats.h"
 
 using namespace std;
@@ -83,7 +83,7 @@ struct StatusList
     // cards[2], cards[3] and cards[4] are the flop
     // cards[5] iss the turn and cards[6] is the river
     // Other spaces seem to never be referenced... still not sure why they are there...
-    Card cards[20];  
+    BotCard cards[20];  
 };
 
 /* class MsgQueueBase *********************************************************/
@@ -155,10 +155,10 @@ public:
 	void setStatusBigBlind(int blind)			{ status.bb = blind;						} 
 	void setStatusSmallBline(int blind)			{ status.sb = blind;						}
 
-	void setStatusHoleCards(Card c1, Card c2)   { setCard(c1, 0); setCard(c2,1);			}
-	void setStatusFlopCards(Card c1, Card c2, Card c3) {setCard(c1, 2); setCard(c2,3); setCard(c3,4);}
-	void setStatusTurnCard(Card c1)				{ setCard(c1, 5);							}
-	void setStatusRiverCard(Card c1)			{ setCard(c1, 6);							}
+	void setStatusHoleCards(BotCard c1, BotCard c2)   { setCard(c1, 0); setCard(c2,1);			}
+	void setStatusFlopCards(BotCard c1, BotCard c2, BotCard c3) {setCard(c1, 2); setCard(c2,3); setCard(c3,4);}
+	void setStatusTurnCard(BotCard c1)				{ setCard(c1, 5);							}
+	void setStatusRiverCard(BotCard c1)			{ setCard(c1, 6);							}
 
 	void print();
 	void printLight();
@@ -198,7 +198,7 @@ public:
 	int getPlayersAlive()						{ return status.livingplayers;				}
 	int getPlayersActive();
 
-	Card getCard(int n)							{ return status.cards[n];					}
+	BotCard getCard(int n)							{ return status.cards[n];					}
 	double getPotOdds()							{ return getPotOdds(getCostToCall());		}
 	double getPotOdds(int cost)					{ return status.pot/(double)cost;			}
 	int getCostToCall()							{ return getCostToCall(getActionPlayer());	}
@@ -208,8 +208,8 @@ public:
 	PokerHand getHand()							{ return status.cards[0]+status.cards[1];  }
 	PokerHand getBoard()						{ return status.cards[2]+status.cards[3]+status.cards[4]+status.cards[5]+status.cards[6];  }
 	PokerHand getFlop()							{ return status.cards[2]+status.cards[3]+status.cards[4]; }
-	Card getTurn()								{ return status.cards[5]; }
-	Card getRiver()								{ return status.cards[6]; }
+	BotCard getTurn()								{ return status.cards[5]; }
+	BotCard getRiver()								{ return status.cards[6]; }
 
 	/* player info */
 	bool isAlive(int player);
@@ -218,7 +218,7 @@ public:
     int getNameIndex(const char* name, bool addPlayer=true);
 	int getStack(int player)					{ return (players[player]==NULL)?(0):(players[player]->stack);	}
 	PlayerStats getPlayer(int n)				{ return *players[n];				}
-	char* getName(int index)					{ return (players[index]==NULL)?(""):(players[index]->GetName());	}  
+	const char* getName(int index)					{ return (players[index]==NULL)?(""):(players[index]->GetName());	}  
 	char* getPlayerPlace(int place);
 
 	int getCheckAct(int player, int act=0);
@@ -243,7 +243,7 @@ public:
 	/* debug and testing */
 	void regAIStat(const AIStat& ai);
 	void checkCashIntegrity();
-	void setCard(Card c, int n)					{ status.cards[n]=c;				}
+	void setCard(BotCard c, int n)					{ status.cards[n]=c;				}
 	void toggleAllowPlay(bool in)				{ allowPlay=in;						}
 };
 
@@ -255,10 +255,6 @@ private:
     /* Windows Admin */
     int msg_rec;
     bool file_input;
-    HWND RVPhwnd;
-    HWND textbox;
-	HWND hwndFront;
-	HDC RVPhdc;
             
     int nextline;
 
@@ -316,7 +312,7 @@ public:
 	void stayActive();
 
     /* Variables */
-    HWND GetWindowHandle() { return RVPhwnd; }
+    //HWND GetWindowHandle() { return RVPhwnd; }
 	int GetNameIndexTrue(int n);
 };
 

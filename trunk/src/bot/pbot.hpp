@@ -46,6 +46,9 @@
 
 #include "Protocol.h"
 
+#include "msgqueue.h"
+#include "HoldemTournamentAI.h"
+
 #include "WMain.hpp"
 #include "WTable.hpp"
 
