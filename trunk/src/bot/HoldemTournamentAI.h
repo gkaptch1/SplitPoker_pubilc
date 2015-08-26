@@ -77,7 +77,7 @@ struct TableTexture
 		activeafter,
 		activetotal;
 
-	Card tripcard,
+	BotCard tripcard,
 		paircard;
 
 	int facecards;

@@ -4,6 +4,7 @@
 /* #includes ******************************************************************/
 
 #include "Poker/poker.h"
+#include "Poker/card.h"
 #include <vector>
 //#include <windows.h>
 

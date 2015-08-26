@@ -1,12 +1,11 @@
 
 /* #includes ******************************************************************/
 
-#include "stdafx.h"
 #include "HoldemTournamentAI.h"
-#include "TournamentData.h"
+//#include <stdlib.h>  //WE CAN PUT THIS BACK IN IF WE NEED TO USE ITOA (IN PROFILER CODE)
 
 /* Constructer / Destructer ***************************************************/
-HoldemTournamentAIBase::HoldemTournamentAIBase(MsgQueueBase* q):profiler("C:\\poker\\profiler\\tmp.txt")
+HoldemTournamentAIBase::HoldemTournamentAIBase(MsgQueueBase* q)
 {
 	playerName = NULL;
 
@@ -29,7 +28,7 @@ HoldemTournamentAIBase::HoldemTournamentAIBase(MsgQueueBase* q):profiler("C:\\po
 
 HoldemTournamentAIBase::~HoldemTournamentAIBase()
 {
-	profiler.close();
+	//profiler.close();
 }
 
 void HoldemTournamentAIBase::uberDebug(char* s)
@@ -95,7 +94,7 @@ void HoldemTournamentAIBase::reset()
 /* HoldemTournamentAIBase::openProfiler() *************************************/
 void HoldemTournamentAIBase::openProfiler(int game)
 {
-	string file="C:\\poker\\profiler\\game_";
+	/*string file="C:\\poker\\profiler\\game_";
 	char buff[40];
 	memset(buff,0,sizeof(buff));
 	itoa(table->getGameID(),buff,10);
@@ -103,6 +102,7 @@ void HoldemTournamentAIBase::openProfiler(int game)
 	file+=".txt";
 	profiler.close();
 	profiler.open(file.c_str());//, ofstream::out | ofstream::app);
+	*/
 }
 
 /* HoldemTournamentAIBase::makePlay() *****************************************/
@@ -122,7 +122,8 @@ void HoldemTournamentAIBase::makePlay()
 
 	if (table->getCard(0)!=NOCARD&&table->getCard(1)!=NOCARD)
 	{
-		if (utg) Sleep(4000);
+		//GABE TODO ;ets make sure that this doesnt break everything without the sleep
+		if (utg) //Sleep(4000);
 		table->updateHoleCards();
 
 		if (getAIPlayer()==table->getActionPlayer()) {	
@@ -133,20 +134,20 @@ void HoldemTournamentAIBase::makePlay()
 			case BET:
 			case RAISE:
 				table->DoBet(play.amt);
-				Sleep(50);
+				//Sleep(50);
 				table->DoCall();
 				break;
 
 			case CALL:
 				table->DoCheck();
-				Sleep(50);
+				//Sleep(50);
 				table->DoCall();
 				break;
 
 			case CHECK:
 			case FOLD:
 				table->DoCheck();
-				Sleep(50);
+				//Sleep(50);
 				table->DoFold();
 				break;
 			}
@@ -800,63 +801,63 @@ int HoldemTournamentAIBase::GetPFQual()
     if (table->getCard(0).GetSuit()==table->getCard(1).GetSuit())
         ret|=PF_SUITED;
 
-    if (table->getCard(0).GetRank()-1==table->getCard(1).GetRank() ||
-        table->getCard(0).GetRank()+1==table->getCard(1).GetRank())
+    if ((table->getCard(0).GetRank()-1==table->getCard(1).GetRank()) ||
+        (table->getCard(0).GetRank()+1==table->getCard(1).GetRank()))
         ret|=PF_CONNECTED;
 
-    if (table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='A' ||
-        table->getCard(0).GetIndex()=='K'&&table->getCard(1).GetIndex()=='K' ||
-        table->getCard(0).GetIndex()=='Q'&&table->getCard(1).GetIndex()=='Q')
+    if ((table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='A') ||
+        (table->getCard(0).GetIndex()=='K'&&table->getCard(1).GetIndex()=='K') ||
+        (table->getCard(0).GetIndex()=='Q'&&table->getCard(1).GetIndex()=='Q'))
         ret|=PF_ALLIN_A;
     else if
-       (table->getCard(0).GetIndex()=='J'&&table->getCard(1).GetIndex()=='J' ||
-        table->getCard(0).GetIndex()=='0'&&table->getCard(1).GetIndex()=='0' ||
-        table->getCard(0).GetIndex()=='9'&&table->getCard(1).GetIndex()=='9' ||
-        table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='K' ||
-        table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='Q')
+       ((table->getCard(0).GetIndex()=='J'&&table->getCard(1).GetIndex()=='J' )||
+        (table->getCard(0).GetIndex()=='0'&&table->getCard(1).GetIndex()=='0' )||
+        (table->getCard(0).GetIndex()=='9'&&table->getCard(1).GetIndex()=='9' )||
+        (table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='K' )||
+        (table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='Q'))
         ret|=PF_ALLIN_B;
     else if
-       (table->getCard(0).GetIndex()=='8'&&table->getCard(1).GetIndex()=='8' ||
-        table->getCard(0).GetIndex()=='7'&&table->getCard(1).GetIndex()=='7' ||
-        table->getCard(0).GetIndex()=='6'&&table->getCard(1).GetIndex()=='6' ||
-        table->getCard(0).GetIndex()=='5'&&table->getCard(1).GetIndex()=='5' ||
-        table->getCard(0).GetIndex()=='3'&&table->getCard(1).GetIndex()=='4' ||
-        table->getCard(0).GetIndex()=='2'&&table->getCard(1).GetIndex()=='3' ||
-        table->getCard(0).GetIndex()=='1'&&table->getCard(1).GetIndex()=='2' ||
-        table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='J' ||
-        table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='0' ||
-        table->getCard(0).GetIndex()=='K'&&table->getCard(1).GetIndex()=='Q')
+       ((table->getCard(0).GetIndex()=='8'&&table->getCard(1).GetIndex()=='8' )||
+        (table->getCard(0).GetIndex()=='7'&&table->getCard(1).GetIndex()=='7' )||
+        (table->getCard(0).GetIndex()=='6'&&table->getCard(1).GetIndex()=='6' )||
+        (table->getCard(0).GetIndex()=='5'&&table->getCard(1).GetIndex()=='5' )||
+        (table->getCard(0).GetIndex()=='3'&&table->getCard(1).GetIndex()=='4' )||
+        (table->getCard(0).GetIndex()=='2'&&table->getCard(1).GetIndex()=='3' )||
+        (table->getCard(0).GetIndex()=='1'&&table->getCard(1).GetIndex()=='2' )||
+        (table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='J' )||
+        (table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='0' )||
+        (table->getCard(0).GetIndex()=='K'&&table->getCard(1).GetIndex()=='Q'))
         ret|=PF_ALLIN_C;
 
-    if (table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='A' ||
-        table->getCard(0).GetIndex()=='K'&&table->getCard(1).GetIndex()=='K' ||
-        table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='K'&&ret&PF_SUITED)
+    if ((table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='A' )||
+        (table->getCard(0).GetIndex()=='K'&&table->getCard(1).GetIndex()=='K' )||
+        (table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='K'&&ret&PF_SUITED))
         ret|=PF_GRP_A;
-    if (table->getCard(0).GetIndex()=='Q'&&table->getCard(1).GetIndex()=='Q' ||
-        table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='K' ||
-        table->getCard(0).GetIndex()=='J'&&table->getCard(1).GetIndex()=='J' ||
-        table->getCard(0).GetIndex()=='0'&&table->getCard(1).GetIndex()=='0')
+    if ((table->getCard(0).GetIndex()=='Q'&&table->getCard(1).GetIndex()=='Q' )||
+        (table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='K' )||
+        (table->getCard(0).GetIndex()=='J'&&table->getCard(1).GetIndex()=='J' )||
+        (table->getCard(0).GetIndex()=='0'&&table->getCard(1).GetIndex()=='0'))
         ret|=PF_GRP_B;
-    if (table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='Q'&&ret&PF_SUITED ||
-        table->getCard(0).GetIndex()=='9'&&table->getCard(1).GetIndex()=='9' ||
-        table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='Q' ||
-        table->getCard(0).GetIndex()=='8'&&table->getCard(1).GetIndex()=='8' ||
-        table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='J'&&ret&PF_SUITED)
+    if ((table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='Q'&&ret&PF_SUITED) ||
+        (table->getCard(0).GetIndex()=='9'&&table->getCard(1).GetIndex()=='9' )||
+        (table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='Q' )||
+        (table->getCard(0).GetIndex()=='8'&&table->getCard(1).GetIndex()=='8' )||
+        (table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='J'&&ret&PF_SUITED))
         ret|=PF_GRP_C;
-    if (table->getCard(0).GetIndex()=='7'&&table->getCard(1).GetIndex()=='7' ||
-        table->getCard(0).GetIndex()=='K'&&table->getCard(1).GetIndex()=='Q'&&ret&PF_SUITED ||
-        table->getCard(0).GetIndex()=='6'&&table->getCard(1).GetIndex()=='6' ||
-        table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='0'&&ret&PF_SUITED ||
-        table->getCard(0).GetIndex()=='5'&&table->getCard(1).GetIndex()=='5' ||
-        table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='J')
+    if ((table->getCard(0).GetIndex()=='7'&&table->getCard(1).GetIndex()=='7' )||
+        (table->getCard(0).GetIndex()=='K'&&table->getCard(1).GetIndex()=='Q'&&ret&PF_SUITED )||
+        (table->getCard(0).GetIndex()=='6'&&table->getCard(1).GetIndex()=='6' )||
+        (table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='0'&&ret&PF_SUITED )||
+        (table->getCard(0).GetIndex()=='5'&&table->getCard(1).GetIndex()=='5' )||
+        (table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='J'))
         ret|=PF_GRP_D;
-    if (table->getCard(0).GetIndex()=='K'&&table->getCard(1).GetIndex()=='Q' ||
-        table->getCard(0).GetIndex()=='4'&&table->getCard(1).GetIndex()=='4' ||
-        table->getCard(0).GetIndex()=='K'&&table->getCard(1).GetIndex()=='J'&&ret&PF_SUITED ||
-        table->getCard(0).GetIndex()=='3'&&table->getCard(1).GetIndex()=='3' ||
-        table->getCard(0).GetIndex()=='2'&&table->getCard(1).GetIndex()=='2' ||
-        table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='0' ||
-        table->getCard(0).GetIndex()=='Q'&&table->getCard(1).GetIndex()=='J'&&ret&PF_SUITED)
+    if ((table->getCard(0).GetIndex()=='K'&&table->getCard(1).GetIndex()=='Q' )||
+        (table->getCard(0).GetIndex()=='4'&&table->getCard(1).GetIndex()=='4' )||
+        (table->getCard(0).GetIndex()=='K'&&table->getCard(1).GetIndex()=='J'&&ret&PF_SUITED )||
+        (table->getCard(0).GetIndex()=='3'&&table->getCard(1).GetIndex()=='3' )||
+        (table->getCard(0).GetIndex()=='2'&&table->getCard(1).GetIndex()=='2' )||
+        (table->getCard(0).GetIndex()=='A'&&table->getCard(1).GetIndex()=='0' )||
+        (table->getCard(0).GetIndex()=='Q'&&table->getCard(1).GetIndex()=='J'&&ret&PF_SUITED))
         ret|=PF_GRP_E;
 
     return ret;

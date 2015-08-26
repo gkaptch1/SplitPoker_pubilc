@@ -44,3 +44,11 @@ void HoleCards::debug()
 {
 	print_cards("Hole", &cards);
 }
+
+std::vector<Card> HoleCards::getSeperatedCards()
+{
+	std::vector<Card> toReturn;
+	toReturn.push_back(cards.front());
+	toReturn.push_back(cards.back());
+	return toReturn;
+}

@@ -1,7 +1,5 @@
 
 /* #includes ******************************************************************/
-#include "stdafx.h"
-
 #include "MsgQueue.h"
 #include "HoldemTournamentAI.h"
 #include "TournamentData.h"

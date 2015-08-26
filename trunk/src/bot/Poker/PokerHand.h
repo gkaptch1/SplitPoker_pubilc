@@ -61,12 +61,12 @@ public:
 	const bool operator >= (const PokerHand& h) const		{ return !(*this<h); }
 
 	PokerHand& operator += (const PokerHand& h)				{ return (*this = *this + h); }
-	PokerHand& operator += (const Card& c)					{ return (*this = *this + c); }
+	PokerHand& operator += (const BotCard& c)					{ return (*this = *this + c); }
 
 	PokerHand& operator =  (const PokerHand& h);
-	PokerHand& operator =  (const Card& c);
+	PokerHand& operator =  (const BotCard& c);
 	PokerHand  operator +  (const PokerHand& h) const;
-	PokerHand  operator +  (const Card& c) const;
+	PokerHand  operator +  (const BotCard& c) const;
 };
 
 #endif

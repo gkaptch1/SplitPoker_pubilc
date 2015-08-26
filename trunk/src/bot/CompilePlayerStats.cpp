@@ -1,14 +1,12 @@
 
 /* #includes ******************************************************************/
 
-#include "stdafx.h"
-
 #include "MsgQueue.h"
 
 /* CompilePlayerStats() *******************************************************/
 int CompilePlayerStats()
 {
-	string archiveDir="C:\\poker\\GameArchive\\";
+/*	string archiveDir="C:\\poker\\GameArchive\\";
 	string finalDir="C:\\poker\\GameArchive\\processed\\";
 
 	cout << endl << endl << "CompilePlayerStats()" << endl << "-----------------------------------------------------" << endl << endl;
@@ -16,7 +14,7 @@ int CompilePlayerStats()
 	// enumerate directories
 	WIN32_FIND_DATA dirInfo;
 	HANDLE dirHandle=FindFirstFile((archiveDir+"*").c_str(),&dirInfo);
-	BOOL dirMore;
+	bool dirMore;
 	dirMore=FindNextFile(dirHandle,&dirInfo); // remove "."
 	dirMore=FindNextFile(dirHandle,&dirInfo); // remove ".."
 
@@ -30,7 +28,7 @@ int CompilePlayerStats()
 		// enumerate files
 		WIN32_FIND_DATA fileInfo;
 		HANDLE fileHandle=FindFirstFile((archiveDir+dir+"\\*").c_str(),&fileInfo);
-		BOOL fileMore;
+		bool fileMore;
 		fileMore=FindNextFile(fileHandle,&fileInfo); // remove "."
 		fileMore=FindNextFile(fileHandle,&fileInfo); // remove ".."
 
@@ -45,29 +43,30 @@ int CompilePlayerStats()
 		}
 		cout << endl;
 	}
-
+*/
 	return 0;
 }
 
 /* ResetPlayerStats() *********************************************************/
 int ResetPlayerStats()
 {
+	/*
 	string archiveDir="C:\\poker\\GameArchive\\processed\\";
 	string finalDir="C:\\poker\\GameArchive\\";
 
 	cout << endl << endl << "ResetPlayerStats()" << endl << "-----------------------------------------------------" << endl << endl;
 	cout << "Delete database? (yes/no)" << endl;
-/*	string input;
-	cin >> input;
-	if (input!="yes") {
-		cout << "Not deleting database." << endl;
-		return 0;
-	}
-*/
+//	string input;
+//	cin >> input;
+//	if (input!="yes") {
+//		cout << "Not deleting database." << endl;
+//		return 0;
+//	}
+//
 	// enumerate directories
 	WIN32_FIND_DATA dirInfo;
 	HANDLE dirHandle=FindFirstFile((archiveDir+"*").c_str(),&dirInfo);
-	BOOL dirMore;
+	bool dirMore;
 	dirMore=FindNextFile(dirHandle,&dirInfo); // remove "."
 	dirMore=FindNextFile(dirHandle,&dirInfo); // remove ".."
 
@@ -81,7 +80,7 @@ int ResetPlayerStats()
 		// enumerate files
 		WIN32_FIND_DATA fileInfo;
 		HANDLE fileHandle=FindFirstFile((archiveDir+dir+"\\*").c_str(),&fileInfo);
-		BOOL fileMore;
+		bool fileMore;
 		fileMore=FindNextFile(fileHandle,&fileInfo); // remove "."
 		fileMore=FindNextFile(fileHandle,&fileInfo); // remove ".."
 
@@ -100,6 +99,8 @@ int ResetPlayerStats()
 	
 	// remove WEKA files
 	system("erase c:\\poker\\WEKA\\*.* /F /Q");
+
+	*/
 
 	return 0;
 }
@@ -121,7 +122,7 @@ int CompilePlayerStats_old()
 		system("move \"C:\\Documents and Settings\\m083306\\My Documents\\dev\\poker manager\\test\\verified\\parsed\\*\" \"C:\\Documents and Settings\\m083306\\My Documents\\dev\\poker manager\\test\\verified\\\"");
 	}
 	HANDLE handle=FindFirstFile((LPCSTR)"C:\\Documents and Settings\\m083306\\My Documents\\dev\\poker manager\\test\\verified\\*",&info);
-	BOOL more=FindNextFile(handle,&info);;
+	bool more=FindNextFile(handle,&info);;
 
 	for (int i=0; more; i++)
 	{

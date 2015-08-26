@@ -1621,7 +1621,11 @@ int main(int argc, char **argv)
 ActionRet makePlay() 
 {
 	//retirn ai->makePlay();
-	return NULL;
+	ActionRet ret;
+	ret.name="continueBet";
+	ret.action=BET;
+	ret.amt=17;
+	return ret;
 }
 
 //Not making this a constructor because i dont want to import Card.hpp in Card.hpp
@@ -1633,23 +1637,26 @@ BotCard CardToBotCard(Card c) {
 	char suitletter;
 	char faceletter;
 
-	switch(face)
+	switch(suit)
 	{
-		case Card::Clubs
+		case Card::Clubs:
 			suitletter='c';
 			break;
-		case Card::Diamonds
+		case Card::Diamonds:
 			suitletter='d';
 			break;
-		case Card::Hearts
+		case Card::Hearts:
 			suitletter='h';
 			break;
-		case Card::Spades
+		case Card::Spades:
+			suitletter='s';
+			break;
+		default:
 			suitletter='s';
 			break;
 	}
 
-	switch(suit)
+	switch(face)
 	{
 		case Card::Two:
 			faceletter='2';
@@ -1690,21 +1697,24 @@ BotCard CardToBotCard(Card c) {
 		case Card::Ace:
 			faceletter='a';
 			break;
+		default:
+			faceletter='a';
+			break;
 	}
 
 	BotCard toReturn(faceletter, suitletter);
 	return toReturn;
 }
 
-Card BotCardToCard(Botcard bc) {
+Card BotCardToCard(BotCard bc) {
 
-	char bcrank = bc.getIndex();
-	char bcsuit = bc.getSuit();
+	char bcrank = bc.GetIndex();
+	char bcsuit = bc.GetSuit();
 
 	Card::Face face;
 	Card::Suit suit;
 
-	switch(face)
+	switch(bcrank)
 	{
         case '2':
         	face = Card::Two;
@@ -1792,8 +1802,10 @@ void PBot::translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo
 			table_snapshot &table = tinfo->snap;
 			HoleCards &holecards = tinfo->holecards;
 			//TODO translate from hn holecards to pp holecards
-			msgqueue.setStatusHoleCards(*holecards);
-			
+			std::vector<Card> holeCardsVector;
+			holecards.copyCards(&holeCardsVector);
+			msgqueue.setStatusHoleCards(CardToBotCard(holeCardsVector[0]), CardToBotCard(holeCardsVector[1]));
+
 			Tokenizer st(":");
 			
 			// state:betting_round
@@ -1826,15 +1838,15 @@ void PBot::translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo
 				Tokenizer ct(":");
 				ct.parse(board);
 				
-				if (ct.count() == 0)
+				//if (ct.count() == 0)
 					//cc.clear();
 					//TODO clear out the cards buffer in msgqueue
 				
 				if (ct.count() >= 3)
 				{
-					BotCard  cf1(ct.getNext().c_str());
-					BotCard  cf2(ct.getNext().c_str());
-					BotCard  cf3(ct.getNext().c_str());
+					BotCard cf1(ct.getNext().c_str());
+					BotCard cf2(ct.getNext().c_str());
+					BotCard cf3(ct.getNext().c_str());
 					
 					//TODO translate cards
 					msgqueue.setStatusFlopCards(cf1, cf2, cf3);
@@ -1902,8 +1914,8 @@ void PBot::translate_hn_to_pp_state(Tokenizer &t, int snaptype, tableinfo* tinfo
 				std::string shole = st.getNext();
 				if (shole.length() == 4)
 				{
-					BotCard h1(shole.substr(0, 2).c_str());
-					BotCard h2(shole.substr(2, 2).c_str());
+					Card h1(shole.substr(0, 2).c_str());
+					Card h2(shole.substr(2, 2).c_str());
 					si.holecards.setCards(h1, h2);
 					// if there are hole-cards in the snapshot
 					// then there's no further action possible

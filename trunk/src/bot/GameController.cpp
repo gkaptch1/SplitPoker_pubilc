@@ -1,15 +1,16 @@
+//#include "stdafx.h"
 
-#include "stdafx.h"
-
-#include "Main.h"
+//#include "Main.h"
 #include "MsgQueue.h"
 #include "HoldemTournamentAI.h"
 
+#if 0
 ConfigParser conf("C:\\poker\\pp.conf");
 MsgQueue tables[MAX_TABLES];
 int numtables=0;
 
 HWND rvp;
+#endif
 
 #define _CRT_SECURE_NO_DEPRECATE
 
@@ -24,95 +25,12 @@ HWND rvp;
 /* MouseClick() ***************************************************************/
 void MouseClick(int x, int y, bool raw=false)
 {	
-	int cx = GetSystemMetrics(SM_CXSCREEN);
-	int cy = GetSystemMetrics(SM_CYSCREEN);
-
-	SetForegroundWindow(rvp);
-
-	if (!raw) {
-		x+=2;
-		y+=29;
-		WINDOWINFO inf;
-		memset(&inf,0,sizeof(inf));
-		GetWindowInfo(rvp,&inf);
-		x+=inf.rcWindow.left;
-		y+=inf.rcWindow.top;
-	}
-
-    INPUT in;
-    memset(&in,0,sizeof(in));
-    in.type=INPUT_MOUSE;
-    in.mi.dx=int(x*(65535.0/cx));
-    in.mi.dy=int(y*(65535.0/cy));
-    in.mi.dwFlags=MOUSEEVENTF_MOVE|MOUSEEVENTF_ABSOLUTE|MOUSEEVENTF_LEFTDOWN;
-
-	SendInput(1,&in,sizeof(in));
-    in.mi.dwFlags=MOUSEEVENTF_ABSOLUTE|MOUSEEVENTF_LEFTUP;
-    SendInput(1,&in,sizeof(in));
-}
-
-/* EnumWindowsProc_LoadTables() ***********************************************/
-BOOL CALLBACK EnumWindowsProc_LoadTables(HWND hwnd,LPARAM lParam)
-{
-    char buff[255]; memset(buff,0,sizeof(buff));
-    GetWindowTextA(hwnd, buff, sizeof(buff));
-
-//    if (strncmp(buff, "Royal Vegas Poker", 10)==0)
-//    if (strncmp(buff, "PokerTime", 10)==0)
-    if (strncmp(buff, "Poker Time", 10)==0)					// modified 26Feb2010
-    {
-		cout << buff << endl;
-
-// don't continue if it's the lobby
-
-//        if (strncmp(buff, "Royal Vegas Poker - (", 21)!=0)
-//        if (strncmp(buff, "PokerTime - (", 21)!=0)
-        if (strncmp(buff, "Poker Time - Hold'em (", 21)!=0)					// modified 26Feb2010
-        {
-			rvp=hwnd;
-            return TRUE;
-        }
-		else
-		{
-			cout << "                 awesome!!!" << endl;
-		}
-
-		char buff[255]; 
-		memset(buff,0,sizeof(buff));
-		GetWindowTextA(hwnd, buff, sizeof(buff));
-//		void* loc=(void*)((int)(buff)+48+tables[0].getAI()->getAIMoniker().length());
-		
-		void* loc=(void*)((int)(buff)+39+3+conf.getStrValue("Moniker").length());
-
-		int i=0;
-		char b[50]; memset(b,0,sizeof(b));
-		char t[50]; memset(t,0,sizeof(t));
-
-		for (i=0; ((char*)loc)[i]!=' '; i++)
-		{
-			b[i]=((char*)loc)[i];
-		}
-		b[i+1]=0;
-		loc=(void*)((int)loc+i+1);
-		for (i=0; ((char*)loc)[i]!='['; i++)
-		{
-			t[i]=((char*)loc)[i];
-		}
-		t[i-1]=0;
-
-		cout << "b: " << b << "      t: " << t << endl;
-
-		tables[numtables].LoadTable("tmp",b,t);
-while(1);
-		numtables++;
-    }
-
-    return TRUE;
 }
 
 /* GameController() ***********************************************************/
 void GameController()
 {
+#if 0
 	/* Setup **************************/
 	int starttime	= (int)conf.getRealValue("timestart"),
 		endtime		= (int)conf.getRealValue("timeend"),
@@ -231,7 +149,7 @@ void GameController()
 		tables[0].printLightHeader();
 
 		/* Update Tables */
-		for (int i=0; i<MAX_TABLES&&i<numtables; i++) {
+		for (int i=0; i<MAX_TAsLES&&i<numtables; i++) {
 			cout << i << endl;
 			tables[i].getAI()->setWatchingOnly(false);
 			tables[i].toggleAllowPlay(allow);
@@ -271,4 +189,5 @@ void GameController()
 
 		Sleep(200);
 	}
+#endif
 }

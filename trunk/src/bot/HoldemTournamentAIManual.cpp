@@ -1,7 +1,6 @@
 
 /* #includes ******************************************************************/
 
-#include "stdafx.h"
 #include "HoldemTournamentAI.h"
 #include "TournamentData.h"
 

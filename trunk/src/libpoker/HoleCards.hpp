@@ -37,6 +37,7 @@ public:
 	void clear() { cards.clear(); };
 	
 	void copyCards(std::vector<Card> *v) const { v->insert(v->end(), cards.begin(), cards.end()); };
+	std::vector<Card> getSeperatedCards();
 	
 	void debug();
 private:
