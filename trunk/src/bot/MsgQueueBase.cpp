@@ -1,8 +1,7 @@
 
 /* #includes ******************************************************************/
 
-#include "MsgQueue.h"
-#include "TournamentData.h"
+#include "msgqueue.h"
 
 /* Constructer / Destructer ***************************************************/
 MsgQueueBase::MsgQueueBase()
@@ -13,7 +12,7 @@ MsgQueueBase::MsgQueueBase()
 	memset(&players,  0,sizeof(players));
     memset(&holeCards,0,sizeof(holeCards));
 
-	db			= NULL;
+	//db			= NULL;
     ai			= NULL;
 
 	starttime	= 0;
@@ -117,7 +116,7 @@ int MsgQueueBase::getCheckAct(int player, int act)
 /* MsgQueueBase::regAIStat() **************************************************/
 void MsgQueueBase::regAIStat(const AIStat& s)
 {	
-	db->RegisterAIAct(s);
+	//db->RegisterAIAct(s);
 }
 
 /* MsgQueueBase::checkCashIntegrity() *****************************************/

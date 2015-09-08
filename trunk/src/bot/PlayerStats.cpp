@@ -1,8 +1,10 @@
 
 /* #includes ******************************************************************/
 
-#include "stdafx.h"
 #include "PlayerStats.h"
+#include <string>
+#include <stdlib.h>
+#include "msgqueue.h"
 
 /* MACROS *********************************************************************/
 #define VERBOS(x,y,z) /*printf(x,y,z);*/
@@ -94,7 +96,7 @@ char* PlayerStats::BuffStatsDump()
 {
     char *buff=(char*)malloc(4000);
     memset(buff,0,4000);
-    char num[100];
+/*    char num[100];
     strcpy(buff,player);
 
     // raw
@@ -186,7 +188,7 @@ char* PlayerStats::BuffStatsDump()
     strcat(buff,"\t");
 
     strcat(buff,"\n");
-
+*/
     return buff;
 }  
 

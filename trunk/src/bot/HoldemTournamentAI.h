@@ -3,9 +3,13 @@
 
 /* Prototypes *****************************************************************/
 
+//#include "msgqueue.h"
+
+class MsgQueueBase;
+
 #include "Poker/poker.h"
 #include "PlayerHoleCards.h"
-#include "MsgQueue.h"
+#include <string>
 
 /* Macros *********************************************************************/
 #define PASSIVE_SLOW            (passivity>30)
@@ -129,8 +133,10 @@ protected:
 
 //	ofstream profiler;
 
-//#define profile_line(x) profiler << "Game " << table->getGameID() << ", Hand #" << table->getNumHands() << " [ " << table->getHand().toString() << " - " << table->getBoard().toString() << " ], " << /*" File " << __FILE__ <<*/ " (" << __LINE__ << ") :  " << (x) << endl";
-#define toggleVar(v) {profile_line(#v); v=true;}
+//#define profile_line(x) profiler << "Game " << table->getGameID() << " Hand #" << table->getNumHands() << " [ " << table->getHand().toString() << " - " << table->getBoard().toString() << " ], " << /*" File " << __FILE__ <<*/ " (" << __LINE__ << ") :  " << (x) << endl";
+//#define toggleVar(v) {profile_line(#v); v=true;}
+#define toggleVar(v) {v=true;}
+
 
 	/* strategy */
 	PlayerHoleCards playercards[10];
@@ -196,7 +202,7 @@ public:
 	const char* getPlayer()									{ return playerName;									} 
 
 	void setWatchingOnly(bool x)							{ watchOnly=x;											}
-	bool watchingOnly()										{ return watchOnly||table->getDryRun();						}
+	bool watchingOnly()										;//{ return watchOnly||table->getDryRun();						}
 	int getAIPlayer();
 
 	string getAIMoniker()									{ return moniker;										}

@@ -63,6 +63,15 @@ QT4_WRAP_CPP (
 #SET(BUILD_SHARED_LIBRARIES OFF)
 #SET(CMAKE_EXE_LINKER_FLAGS "-static")
 
+add_library (
+	client_lib
+	STATIC
+	pclient.cpp
+	WMain.cpp SettingsDialog.cpp CreateGameDialog.cpp AboutDialog.cpp
+	GameListTableModel.cpp PlayerListTableModel.cpp GameListSortFilterProxyModel.cpp
+	WTable.cpp ChatBox.cpp DealerButton.cpp Seat.cpp SeatImages.cpp EditableSlider.cpp TimeOut.cpp
+)
+
 add_executable (
 	holdingnuts
 	WIN32    # when building for windows: do not show the console window

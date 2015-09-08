@@ -19,7 +19,7 @@ Deck::~Deck()
 
 /* math operators *************************************************************/
 
-Deck Deck::operator + (const Card& c) const				
+Deck Deck::operator + (const BotCard& c) const				
 { 
 	Deck tmp=*this;
 	tmp.deck.push_back(c); 
@@ -44,7 +44,7 @@ void Deck::Reset()
 
 	for (int i=0; i<52; i++)
 	{
-		deck+=Card(i);
+		deck+=BotCard(i);
 	}
 }
 
@@ -56,7 +56,7 @@ void Deck::Shuffle()
 		int pos1=rand()%(int)deck.size(),
 			pos2=rand()%(int)deck.size();
 
-		Card tmp=deck[pos1];
+		BotCard tmp=deck[pos1];
 		deck[pos1]=deck[pos2];
 		deck[pos2]=tmp;
 	}
@@ -73,15 +73,15 @@ void Deck::print()
 }
 
 /* Deck::Deal() **************************************************************/
-Card Deck::Deal()
+BotCard Deck::Deal()
 {
-	Card tmp=deck[deck.size()-1];
+	BotCard tmp=deck[deck.size()-1];
 	deck.pop_back();
 	return tmp;
 }
 
 /* Deck::Deal() **************************************************************/
-Card Deck::Deal(Card c)
+BotCard Deck::Deal(BotCard c)
 {
 	PokerHand deck2;
 

@@ -1,6 +1,8 @@
 
 #include "stdafx.h"
 #include "ConfigParser.h"
+#include <algorithm>
+#include <ctype.h>
 
 /* Constructor / Destructor **************************************************/
 
@@ -59,7 +61,7 @@ void ConfigParser::addVar(const char* name, const char* v)
 double ConfigParser::getRealValue(const char* v)
 {
 	string var=v;
-	transform(var.begin(),var.end(),var.begin(),tolower);
+	transform(var.begin(),var.end(),var.begin(),::tolower);
 
 	for (unsigned int i=0; i<conf.size(); i++) {
 		if (conf[i].name==var) {
@@ -74,7 +76,7 @@ double ConfigParser::getRealValue(const char* v)
 string ConfigParser::getStrValue(const char* v)
 {
 	string var=v;
-	transform(var.begin(),var.end(),var.begin(),tolower);
+	transform(var.begin(),var.end(),var.begin(),::tolower);
 
 	for (unsigned int i=0; i<conf.size(); i++) {
 		if (conf[i].name==var) {
@@ -159,7 +161,7 @@ string ConfigParser::killWhite(string s)
 		}
 	}
 
-	transform(ret.begin(),ret.end(),ret.begin(),tolower);
+	transform(ret.begin(),ret.end(),ret.begin(),::tolower);
 
 	return ret;
 }

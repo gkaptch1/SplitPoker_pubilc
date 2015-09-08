@@ -2,45 +2,46 @@
 /* #includes ******************************************************************/
 
 #include "stdafx.h"
+#include <assert.h>
 
-Card NOCARD(-1);
+BotCard NOCARD(-1);
 
 /* Constructer / Destructer ***************************************************/
 
-Card::Card()
+BotCard::BotCard()
 {
     Clear();
 }
 
-Card::Card(int id)
+BotCard::BotCard(int id)
 {
     SetID(id);
 }
 
-Card::Card(char suit, char index)
+BotCard::BotCard(char suit, char index)
 {
     SetCard(suit,index);
 }
 
-Card::Card(std::string cardinfo)
+BotCard::BotCard(std::string cardinfo)
 {
     assert(cardinfo.length() == 2);
-    //Cards from HN come as <Rank><Suit>
+    //BotCards from HN come as <Rank><Suit>
     SetCard(cardinfo[1], cardinfo[0]);
 }
 
-Card::~Card()
+BotCard::~BotCard()
 {
 }
 
-/* Card::GetID() **************************************************************/
-int Card::GetID() const
+/* BotCard::GetID() **************************************************************/
+int BotCard::GetID() const
 {
     return val;
 }
 
-/* Card::GetSuit() ************************************************************/
-char Card::GetSuit() const
+/* BotCard::GetSuit() ************************************************************/
+char BotCard::GetSuit() const
 {   
     char ret=' ';
     if (val<0) return ' ';
@@ -55,8 +56,8 @@ char Card::GetSuit() const
     return ret;
 }
 
-/* Card::GetIndex() ***********************************************************/
-char Card::GetIndex() const
+/* BotCard::GetIndex() ***********************************************************/
+char BotCard::GetIndex() const
 {    
     char ret=' ';
     switch (val%13)
@@ -78,21 +79,21 @@ char Card::GetIndex() const
     return ret;
 }   
 
-/* Card::GetRank() ************************************************************/
-int Card::GetRank() const
+/* BotCard::GetRank() ************************************************************/
+int BotCard::GetRank() const
 {
 	if (val%13<0) return 0;
     return val%13;
 }   
 
-/* Card::SetID() **************************************************************/
-void Card::SetID(int id)
+/* BotCard::SetID() **************************************************************/
+void BotCard::SetID(int id)
 {
     /*if (id>0 && id<52)*/ val=id;
 }       
 
-/* Card::Print() **************************************************************/
-void Card::Print() const
+/* BotCard::Print() **************************************************************/
+void BotCard::Print() const
 {
     char s=GetSuit(),v=GetIndex();
 
@@ -112,8 +113,8 @@ void Card::Print() const
     }
 }     
 
-/* Card::toString() ***********************************************************/
-const string Card::toString() const
+/* BotCard::toString() ***********************************************************/
+const string BotCard::toString() const
 {
 	char s=GetSuit(),v=GetIndex();
 
@@ -129,14 +130,14 @@ const string Card::toString() const
 	return ret;
 }
 
-/* Card::Clear() **************************************************************/
-void Card::Clear()
+/* BotCard::Clear() **************************************************************/
+void BotCard::Clear()
 {
     val=-1;
 }   
 
-/* Card::SetCard() ************************************************************/
-void Card::SetCard(char suit, char index)
+/* BotCard::SetCard() ************************************************************/
+void BotCard::SetCard(char suit, char index)
 {
     int s=0;
     int v=0;

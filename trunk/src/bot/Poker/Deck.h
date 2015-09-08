@@ -4,10 +4,10 @@
 /* #includes ******************************************************************/
 
 #include <vector>
-#include "Card.h"
+#include "card.h"
 #include "PokerHand.h"
 
-/* class Card *****************************************************************/
+/* class BotCard  *****************************************************************/
 
 class Deck
 {
@@ -23,16 +23,16 @@ public:
 
 	void print();
 
-	Card Deal();
-	Card Deal(Card c);
+	BotCard Deal();
+	BotCard Deal(BotCard  c);
 	PokerHand Deal(int size);
 
 	vector<PokerHand> GetCombinations(int size)		{ return deck.GetCombinations(size); }
 	
 	Deck& operator += (const PokerHand& h)				{ return (*this = *this + h); }
-	Deck& operator += (const Card& c)					{ return (*this = *this + c); }
+	Deck& operator += (const BotCard& c)					{ return (*this = *this + c); }
 	Deck  operator +  (const PokerHand& h) const;
-	Deck  operator +  (const Card& c) const;
+	Deck  operator +  (const BotCard& c) const;
 };
 
 #endif // #ifndef _Deck_H_

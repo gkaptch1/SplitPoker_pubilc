@@ -2,7 +2,7 @@
 /* #includes ******************************************************************/
 #include "MsgQueue.h"
 #include "HoldemTournamentAI.h"
-#include "TournamentData.h"
+#include <ctime>
 
 /* #defines *******************************************************************/
 
@@ -22,8 +22,8 @@ MsgQueue::MsgQueue()
 	/* initialize data variables */
     msg_rec			= 0;
     file_input		= false;
-    RVPhwnd			= 0;
-    textbox			= 0;
+    //RVPhwnd			= 0;
+    //textbox			= 0;
             
     filedesc		= NULL;
     nextline		= 0;
@@ -41,7 +41,7 @@ MsgQueue::MsgQueue()
 
 	/* create interfaces */
     ai=new HoldemTournamentAIManual(this);
-	db=new TournamentData(this);
+	//db=new TournamentData(this);
 }
 
 MsgQueue::~MsgQueue()
@@ -84,7 +84,7 @@ ostream& operator << (ostream &out, PlayerAction &p)
 /* MsgQueue::ClearSNGGames() **************************************************/
 void MsgQueue::ClearSNGGames()
 {
-	db->eraseDB();
+	//db->eraseDB();
 }
 
 /* MsgQueue::reset() **********************************************************/
@@ -97,7 +97,7 @@ void MsgQueue::reset()
 		}
 	}
 	delete ai; ai=new HoldemTournamentAIManual(this);
-	delete db; db=new TournamentData(this);
+	//delete db; db=new TournamentData(this);
 
 	memset(&status,0,sizeof(status));
 	memset(&events,0,sizeof(events));
@@ -133,42 +133,21 @@ void MsgQueue::parseTableInfoFromFile(const char* file)
 /* MsgQueue::processErrorMessage() ********************************************/
 void MsgQueue::processErrorMessage(const char* msg)
 {
-	//TODO this should probably have something in it...
+	//TODO GABE this should probably have something in it...
 }
 
 /* MsgQueue::getCurrentDate() *************************************************/
 string MsgQueue::getCurrentDate()
 {	
-	// GABE: i gueess this foesnt hurt anyone....
-	string ret;
-	char buff[400]; 
-	memset(buff,0,sizeof(buff));
-	_strdate(buff);
-	char date[400];
-	memset(date,0,sizeof(date));
-	date[0]='2';
-	date[1]='0';
-	date[2]=buff[6];
-	date[3]=buff[7];
-	date[4]='-';
-	date[5]=buff[0];
-	date[6]=buff[1];
-	date[7]='-';
-	date[8]=buff[3];
-	date[9]=buff[4];
-	date[10]=0;
-	ret=date;
-	return ret;
+	time_t date = time(NULL);
+	return asctime(std::localtime(&date));
 }
 
 /* MsgQueue::getCurrentTime() *************************************************/
 string MsgQueue::getCurrentTime()
 {
-	string ret;
-	char time[400]; 
-	_strtime(time);
-	ret=time;
-	return ret;
+	std::time_t date = std::time(NULL);
+	return std::asctime(std::localtime(&date));
 }
 
 /* MsgQueue::loadTable() ******************************************************/
@@ -176,11 +155,16 @@ void MsgQueue::loadTable()
 {	
 }
 
+long int getSysTime()
+{
+	return static_cast<long int>(time(NULL));
+}
+
 /* MsgQueue::closeTable() *****************************************************/
 void MsgQueue::closeTable()
 {	
 //	if (hwndFront!=NULL) SetForegroundWindow(hwndFront);
-	totaltime+=timeGetTime()-starttime;
+	totaltime+=getSysTime()-starttime;
 }
 
 /* MsgQueue::update() *********************************************************/
@@ -230,14 +214,15 @@ void MsgQueue::updateHoleCards()
 
 /* MsgQueue::ProcessMessage() *************************************************/
 int MsgQueue::ProcessMessage(char* msg, char* nextline)
-{       
+{      
+	return 1; 
 }
 
 /* MsgQueue::RegisterAction() *************************************************/
 
 int MsgQueue::RegisterAction(char* command, char* name)
 {
-
+	return 1;
 }
 
 
@@ -261,7 +246,7 @@ int MsgQueue::GetNameIndexTrue(int n)
 /* MsgQueue::LoadTable() ******************************************************/
 int MsgQueue::LoadTable(char* buy, char* b, char* t)
 {
-
+	return 1;
 }
 
 /* MsgQueue::LoadDumpFile() ***************************************************/
@@ -290,7 +275,7 @@ void MsgQueue::ackPlace()
 /* MsgQueue::tableGood() ******************************************************/
 bool MsgQueue::tableGood()
 {
-	return IsWindow(RVPhwnd);
+	return true;
 }
 
 /* MsgQueue::takeSeat() *******************************************************/

@@ -2,6 +2,9 @@
 /* #includes ******************************************************************/
 
 #include "HoldemTournamentAI.h"
+#include "Poker/card.h"
+#include "msgqueue.h"
+#include "MsgQueueBase.cpp"
 //#include <stdlib.h>  //WE CAN PUT THIS BACK IN IF WE NEED TO USE ITOA (IN PROFILER CODE)
 
 /* Constructer / Destructer ***************************************************/
@@ -15,15 +18,15 @@ HoldemTournamentAIBase::HoldemTournamentAIBase(MsgQueueBase* q)
 	table=q;
 	reset();
 
-	moniker  = conf.getStrValue("moniker");
-	aiverstr = conf.getStrValue("aiver_major");
-	aiverint = (int)conf.getRealValue("aiver_minor");
+	moniker  = "bot";
+	aiverstr = "0";
+	aiverint = 1;
 
 	watchOnly=false;
 
-	bool boo=false;
-	toggleVar(boo);
-	profile_line("fudge");
+	//bool boo=false;
+	//toggleVar(boo);
+	//profile_line("fudge");
 }
 
 HoldemTournamentAIBase::~HoldemTournamentAIBase()
@@ -43,7 +46,7 @@ void HoldemTournamentAIBase::uberDebug(char* s)
 	int handMaskFlag=0;
 	for (int i=0; i<13; i++) {
 		for (int j=0; j<13; j++) {
-			if (handWinMask.GetHand(Card(i),Card(j))&PHC_WINNER) {
+			if (handWinMask.GetHand(BotCard(i),BotCard(j))&PHC_WINNER) {
 				i=j=20;
 				handMaskFlag=57;
 			}
@@ -56,9 +59,9 @@ void HoldemTournamentAIBase::uberDebug(char* s)
 
 	handMaskFlagOld=handMaskFlag;
 
-	cur(x,y+count%15);
+	//cur(x,y+count%15);
 	cout << count << ": " << handMaskFlag << " " << s << "\t\t";
-	cur(x,y+1+count%15);
+	//cur(x,y+1+count%15);
 	cout << "\t\t\t";
 }
 
@@ -162,14 +165,14 @@ void HoldemTournamentAIBase::makePlay()
 void HoldemTournamentAIBase::update()
 {
 /*	AIDebug("EvaluateStrategy");
-	cur(0,64);
+	//cur(0,64);
 
 	PokerHand h;//=table->getBoard();
 	for (int i=2; i<7&&table->getCard(i)!=NOCARD; i++) {
 		h+=table->getCard(i);
 	}
 
-	/* handWinMask */
+//	 handWinMask 
 //	calcHandWinMask();
 
 	/* evaluate actions */
@@ -260,7 +263,7 @@ void HoldemTournamentAIBase::EvaluatePlay(int play)
 	case r:
 		if (actionqueue[play].action!=FOLD&&actionqueue[play].action!=CHECK) {
 			PlayerHoleCards flopped=MatchedFlop();
-			flopped.print(42,42);
+			//flopped.print(42,42);
 			if (actionqueue[play].player<10&&actionqueue[play].player>0) {
 				PlayerHoleCards tmp=playercards[actionqueue[play].player];
 				tmp &= flopped;
@@ -383,7 +386,7 @@ int HoldemTournamentAIBase::betPassive()
 		bet=allin();
 	}
 
-	cur(40,0);
+	//cur(40,0);
 	cout << "betPassive: " << originalBet << " --> " << enemyAdj << " --> " << bet << "          " << endl;
 
 	return bet;
@@ -770,9 +773,9 @@ PlayerHoleCards HoldemTournamentAIBase::GetStraightDraws()
 
 	for (int i=0; i<13; i++) {
 		for (int j=i; j<13; j++) {
-			PokerHand tmp=h+Card(i)+Card(j);
+			PokerHand tmp=h+BotCard(i)+BotCard(j);
 			if (tmp.Straight(4)!=NOCARD) {
-				ret.setHandValid(Card(i+13),Card(j));
+				ret.setHandValid(BotCard(i+13),BotCard(j));
 			}
 		}
 	}
@@ -789,7 +792,7 @@ int HoldemTournamentAIBase::GetPFQual()
 
     if (table->getCard(0).GetRank()<table->getCard(1).GetRank())
     {
-        Card c;
+        BotCard c;
         c=table->getCard(0);
         table->setCard(table->getCard(1),0);
         table->setCard(c,1);
@@ -862,5 +865,8 @@ int HoldemTournamentAIBase::GetPFQual()
 
     return ret;
 }
+
+bool HoldemTournamentAIBase::watchingOnly()
+{ return watchOnly||table->getDryRun();						}
 
 

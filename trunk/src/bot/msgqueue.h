@@ -5,16 +5,33 @@
 
 #include <vector>
 #include <iostream>
+#include <string>
 #include "Poker/Card.h"
 #include "playerstats.h"
+#include "HoldemTournamentAI.h"
 
 using namespace std;
 
 class HoldemTournamentAIBase;
-class TournamentData;
 class PlayerStats;
 
-struct AIStat;
+struct AIStat
+{
+	int action;
+	int bb;
+	BotCard card_h1;
+	BotCard card_h2;
+	string func;
+	int players_active;
+	int players_alive;
+	int pot;
+	int stack;
+	int stage;
+	string sub;
+	string version;
+	int bet;
+	TableTexture t;
+};
 
 #define VIEW_LIGHT			0
 #define VIEW_DEFAULT		1
@@ -96,7 +113,7 @@ protected:
     PlayerStats			*players[20];  // WTF?
 	PokerHand			holeCards[20];
 
-	TournamentData			*db;
+	//TournamentData			*db;
     HoldemTournamentAIBase	*ai;
 	int gameid;
 
@@ -134,8 +151,8 @@ public:
 	int DoCheck()					{return 0;}
 	int DoCall()					{return 0;}
 	int DoRaise()					{return 0;}
-	int DoBet()					{return 0;}
-	int DoBet(int num)			{return 0;}	
+	int DoBet()						;//{return 0;}
+	int DoBet(int num)				{return 0;}	
 	int DoFold()					{return 0;}
 
 //    virtual int DoCheck()						= 0;
@@ -316,6 +333,8 @@ public:
 	bool tableGood();
 
 	int virtual totalCashOnTable()				{ return 10000;				 		}
+
+	int DoBet( int i);
 
 	void stayActive();
 

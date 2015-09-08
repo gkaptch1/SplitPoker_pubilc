@@ -2,6 +2,10 @@
 /* #includes ******************************************************************/
 
 #include "HoldemTournamentAI.h"
+#include <iostream>
+#include "msgqueue.h"
+
+using namespace std;
 
 /* Constructer / Destructer ***************************************************/
 HoldemTournamentAI::HoldemTournamentAI(MsgQueueBase* q):HoldemTournamentAIBase(q)

@@ -5,6 +5,7 @@
 #include "combination.h"
 #include <algorithm>
 #include <iostream>
+#include <stdlib.h>
 
 
 /* Constructer / Destructer ***************************************************/
@@ -13,7 +14,7 @@ PokerHand::PokerHand()
 {
 }
 
-PokerHand::PokerHand(const Card& c)
+PokerHand::PokerHand(const BotCard& c)
 {
 	hand.push_back(c);
 }
@@ -26,18 +27,19 @@ PokerHand& PokerHand::operator = (const PokerHand& h)
 	return *this; 
 }
 
-PokerHand& PokerHand::operator = (const Card& c)					
+PokerHand& PokerHand::operator = (const BotCard& c)					
 { 
 	hand.clear(); 
 	hand.push_back(c); 
 	return *this; 
 }
 
-Card  PokerHand::operator [] (int i) const					
+BotCard  PokerHand::operator [] (int i) const					
 { 
 	if (i<0||i>=(signed)hand.size()) {
 		char buff[40];
-		itoa(i,buff,10);
+		
+//		itoa(i,buff,10);
 //		MessageBox(NULL,__FILE__,buff,0);
 
 		return NOCARD;
@@ -46,7 +48,7 @@ Card  PokerHand::operator [] (int i) const
 	return hand[i]; 
 }
 /*
-Card& PokerHand::operator [] (int i)					
+BotCard& PokerHand::operator [] (int i)					
 { 
 	//assert(i<0||i>=hand.size());
 	if (i<0||i>=hand.size()) {
@@ -55,12 +57,12 @@ Card& PokerHand::operator [] (int i)
 		MessageBox(NULL,__FILE__,buff,0);
 	}
 	//assert(i<0||i>=hand.size());
-	return (Card&)hand[i]; 
+	return (BotCard&)hand[i]; 
 }
 
 /* math operators *************************************************************/
 
-PokerHand PokerHand::operator + (const Card& c) const				
+PokerHand PokerHand::operator + (const BotCard& c) const				
 { 
 	PokerHand tmp=*this;
 	tmp.hand.push_back(c); 
@@ -107,7 +109,7 @@ const bool PokerHand::eq(const PokerHand& h) const
 /* PokerHand::lessThan() ******************************************************/
 bool PokerHand::lessThan(PokerHand h1, PokerHand h2)
 {
-	Card c1=NOCARD,c1b=NOCARD,
+	BotCard c1=NOCARD,c1b=NOCARD,
 		 c2=NOCARD,c2b=NOCARD;
 	int cards=5;
 
@@ -141,7 +143,7 @@ bool PokerHand::lessThan(PokerHand h1, PokerHand h2)
 	// Fullhouse
 	c1=h1.Trip(); if (c1!=NOCARD) c1b=h1.Pair();
 	c2=h2.Trip(); if (c2!=NOCARD) c2b=h2.Pair();
-	Card c1trip=c1,c2trip=c2;
+	BotCard c1trip=c1,c2trip=c2;
 	if ((c1==NOCARD||c1b==NOCARD)&&(c2!=NOCARD&&c2b!=NOCARD)) { return true;  }
 	if ((c1!=NOCARD&&c1b!=NOCARD)&&(c2==NOCARD||c2b==NOCARD)) { return false; }
 	if ((c1!=NOCARD&&c1b!=NOCARD)&&(c2!=NOCARD&&c2b!=NOCARD)&&(c1<c2)) { return true;  }
@@ -215,14 +217,14 @@ highcard:
 /* PokerHand::lessThanFast() **************************************************/
 bool PokerHand::lessThanFast(PokerHand h1, PokerHand h2)
 {
-	Card c1=NOCARD,c1b=NOCARD,
+	BotCard c1=NOCARD,c1b=NOCARD,
 		 c2=NOCARD,c2b=NOCARD;
 	int cards=5;
 
 	// Fullhouse
 	c1=h1.Trip(); if (c1!=NOCARD) c1b=h1.Pair();
 	c2=h2.Trip(); if (c2!=NOCARD) c2b=h2.Pair();
-	Card c1trip=c1,c2trip=c2;
+	BotCard c1trip=c1,c2trip=c2;
 	if ((c1==NOCARD||c1b==NOCARD)&&(c2!=NOCARD&&c2b!=NOCARD)) { return true;  }
 	if ((c1!=NOCARD&&c1b!=NOCARD)&&(c2==NOCARD||c2b==NOCARD)) { return false; }
 	if ((c1!=NOCARD&&c1b!=NOCARD)&&(c2!=NOCARD&&c2b!=NOCARD)&&(c1<c2)) { return true;  }
@@ -285,7 +287,7 @@ vector<PokerHand> PokerHand::GetCombinations(int size)
 {
 	vector<PokerHand> ret;
 
-	vector<Card> tmp=hand;
+	vector<BotCard> tmp=hand;
 
 	PokerHand h;
 	for (int i=0; i<size; i++)
@@ -325,9 +327,9 @@ double PokerHand::WinPercent(PokerHand& board, int cardsLeft)
 
 
 /* PokerHand::HighCard() ******************************************************/
-Card PokerHand::HighCard()
+BotCard PokerHand::HighCard()
 {
-	Card c(0);
+	BotCard c(0);
 	int pos=0;
 
 	for (unsigned int i=0; i<hand.size(); i++)
@@ -345,9 +347,9 @@ Card PokerHand::HighCard()
 }
 
 /* PokerHand::Pair() **********************************************************/
-Card PokerHand::Pair()
+BotCard PokerHand::Pair()
 {
-	Card c=NOCARD;
+	BotCard c=NOCARD;
 	int pos1=0,pos2=0;
 
 	for (unsigned int i=0; i<hand.size(); i++)
@@ -373,9 +375,9 @@ Card PokerHand::Pair()
 }
 
 /* PokerHand::Trip() **********************************************************/
-Card PokerHand::Trip()
+BotCard PokerHand::Trip()
 {
-	Card c=NOCARD;
+	BotCard c=NOCARD;
 	int pos1=0,pos2=0,pos3=0;
 
 	for (unsigned int i=0; i<hand.size(); i++)
@@ -409,9 +411,9 @@ Card PokerHand::Trip()
 }
 
 /* PokerHand::Quad() **********************************************************/
-Card PokerHand::Quad()
+BotCard PokerHand::Quad()
 {
-	Card c=NOCARD;
+	BotCard c=NOCARD;
 	int pos1=0,pos2=0,pos3=0,pos4=0;
 
 	for (unsigned int i=0; i<hand.size(); i++)
@@ -481,8 +483,8 @@ PokerHand PokerHand::Flush()
 
 	if (!h.isEmpty())
 	{
-		h[0]=Card('h',h[0].GetIndex());
-		h[1]=Card('d',h[1].GetIndex());
+		h[0]=BotCard('h',h[0].GetIndex());
+		h[1]=BotCard('d',h[1].GetIndex());
 	}
 
 	return h;
@@ -510,16 +512,16 @@ bool PokerHand::isFlush(int n)
 }
 
 /* PokerHand::Straight() ******************************************************/
-Card PokerHand::Straight(int n)
+BotCard PokerHand::Straight(int n)
 {
 	PokerHand h=*this;
-	Card c=h.HighCard();
+	BotCard c=h.HighCard();
 	int count=1,
 		size=(signed)h.hand.size();
 
 	for (int i=0; i<size&&count<n; i++)
 	{
-		Card tmp=h.HighCard();
+		BotCard tmp=h.HighCard();
 		if (c.GetRank()-tmp.GetRank()==1)
 		{
 			count++;

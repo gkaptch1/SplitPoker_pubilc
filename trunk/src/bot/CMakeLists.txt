@@ -9,6 +9,7 @@ include_directories (
 link_directories(
 	${HOLDINGNUTS_SOURCE_DIR}/src/libpoker
 	${HOLDINGNUTS_SOURCE_DIR}/src/system
+	${HOLDINGNUTS_SOURCE_DIR}/src/client
 )
 
 #IF (WIN32)
@@ -45,13 +46,20 @@ QT4_WRAP_CPP (
 	msgqueue.h resource.h
 )
 
+add_library (
+	botpoker
+	Poker/configparser.cpp 
+	Poker/Card.cpp Poker/Deck.cpp 
+	Poker/Poker.cpp Poker/pokerhand.cpp
+)
+
 add_executable (
 	holdingnutsbot
 	WIN32    # when building for windows: do not show the console window
 	pbot.cpp ${aux_obj}
 	CompilePlayerStats.cpp GameController.cpp HoldemTournamentAI.cpp HoldemTournamentAIBase.cpp
 	HoldemTournamentAIManual.cpp MsgQueue.cpp MsgQueueBase.cpp PlayerHoleCards.cpp
-	PlayerStats.cpp PokerPirate.cpp
+	PlayerStats.cpp
 	${aux_src}
 	${sources_MOC} ${QtApp_RCC_SRCS}
 
@@ -59,7 +67,8 @@ add_executable (
 
 target_link_libraries (
    holdingnutsbot
-   Poker SysAccess System
+   Poker botpoker SysAccess System
+   client_lib
    ${QT_LIBRARIES}
    ${aux_lib}
 )
@@ -74,3 +83,5 @@ INSTALL(DIRECTORY ${HOLDINGNUTS_SOURCE_DIR}/data DESTINATION
 	${CMAKE_DATA_PATH}/holdingnuts)
 
 ##############################################################
+
+#add_subdirectory (Poker)

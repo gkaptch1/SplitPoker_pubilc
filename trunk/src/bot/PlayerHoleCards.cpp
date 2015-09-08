@@ -1,14 +1,15 @@
 
 /* #includes ******************************************************************/
 
-#include "stdafx.h"
 #include "PlayerHoleCards.h"
+#include "Poker/card.h"
+#include <iostream>
 
 /* Globals ********************************************************************/
 //HandRankings inetRanks=PlayerHoleCards::LoadHandRankings("C:\\poker\\startinghands-www.4texasholdem.com.txt");
 //HandRankings inetRanksMod=PlayerHoleCards::LoadHandRankings("C:\\poker\\startinghands-mod.txt");
-HandRankings inetRanksMod=PlayerHoleCards::LoadHandRankings("C:\\poker\\startinghands-unsuited-www.gameorama.com.txt");
-HandRankings defRanks=inetRanksMod;
+//HandRankings inetRanksMod=PlayerHoleCards::LoadHandRankings("C:\\poker\\startinghands-unsuited-www.gameorama.com.txt");
+//HandRankings defRanks=inetRanksMod;
 
 /* Constructer / Destructer ***************************************************/
 PlayerHoleCards::PlayerHoleCards()
@@ -23,7 +24,7 @@ PlayerHoleCards PlayerHoleCards::operator &= (PlayerHoleCards a)
 	{
 		for (int j=0; j<RANKS; j++)
 		{
-			cur(0,0);
+			////cur(0,0);
 //			cout << "[" << i << "," << j << "]";
 			int tmp=(a.hand[i][j]|PHC_WINNER|PHC_LOSER);
 //			cout << "[" << i << "," << j << "]";
@@ -80,10 +81,10 @@ PlayerHoleCards& PlayerHoleCards::operator |= (int a)
 /* PlayerHoleCards::LoadHandRankings() ****************************************/
 HandRankings PlayerHoleCards::LoadHandRankings(char* str)
 {	
-	ifstream in(str);
+	//ifstream in(str);
 	HandRankings ret;
 
-	cout << "Loading hand ranks... ";
+	/* cout << "Loading hand ranks... ";
 
 	while (in) {
 		char v1,v2,s=' ';
@@ -98,8 +99,8 @@ HandRankings PlayerHoleCards::LoadHandRankings(char* str)
 //		in >> d1 >> tmp >> d2 >> tmp >> d3 >> tmp;
 		
 		HandRank_elem e;
-		if (s=='s')  e.h=Card('h',v1)+Card('h',v2);
-		else e.h=Card('h',v1)+Card('c',v2);
+		if (s=='s')  e.h=BotCard('h',v1)+BotCard('h',v2);
+		else e.h=BotCard('h',v1)+BotCard('c',v2);
 		ret.push_back(e);
 	}
 /*	for (int i=0; i<ret.size(); i++) {
@@ -108,10 +109,10 @@ HandRankings PlayerHoleCards::LoadHandRankings(char* str)
 		cout << endl;
 	}
 	getch();
-*/
+
 	ret.pop_back();
 
-	cout << "done." << endl;
+	cout << "done." << endl;*/
 
 	return ret;
 }
@@ -191,14 +192,14 @@ void PlayerHoleCards::ParseStr(char* str)
 /* PlayerHoleCards::print() ***************************************************/
 void PlayerHoleCards::print(int x, int y, int c, bool bw)
 {
-	color(c);
-	cur(x+2,y);
+	//color(c);
+	//cur(x+2,y);
 
 	for (int i=0; i<13; i++)
 	{
-		cout << Card(i).GetIndex() << "";
+		cout << BotCard(i).GetIndex() << "";
 	}
-	cur(x,y+1); cout << " --";
+	//cur(x,y+1); cout << " --";
 	for (int i=0; i<13; i++)
 	{
 		cout << "-";
@@ -207,24 +208,24 @@ void PlayerHoleCards::print(int x, int y, int c, bool bw)
 
 	for (int i=0; i<13; i++)
 	{
-		color(c);
-		cur(x,y+2+i); cout << Card(i).GetIndex() << "|";
+		//color(c);
+		//cur(x,y+2+i); cout << Card(i).GetIndex() << "|";
 		for (int j=0; j<13; j++)
 		{
-			if (!bw&&hand[i][j]&PHC_VALID) {
-				if (hand[i][j]&PHC_LOSER)		{ color(CUR_RED);	}
-				else if (hand[i][j]&PHC_WINNER)	{ color(CUR_GREEN);	}
-				else							{ color(c);			}
-			}
-			else {
-				color(c);
-			}
+			//if (!bw&&hand[i][j]&PHC_VALID) {
+			//	if (hand[i][j]&PHC_LOSER)		{ color(CUR_RED);	}
+			//	else if (hand[i][j]&PHC_WINNER)	{ color(CUR_GREEN);	}
+			//	else							{ color(c);			}
+			//}
+			//else {
+			//	color(c);
+			//}
 				
 			cout << (((hand[i][j]&PHC_VALID)!=0)?(1):(0)) << "";
 		}
 		cout << endl;
 	}
-	color(c);
+	//color(c);
 }
 
 /* PlayerHoleCards::getNumHands() *********************************************/
@@ -265,7 +266,7 @@ int PlayerHoleCards::getNumHandsWonAbs()
 }
 
 /* PlayerHoleCards::GetHand() *************************************************/
-int PlayerHoleCards::GetHand(BotCardc1, BotCardc2)
+int PlayerHoleCards::GetHand(BotCard c1, BotCard c2)
 {
 	if (hand[c1.GetRank()][c2.GetRank()]&PHC_VALID||
 		hand[c2.GetRank()][c1.GetRank()]&PHC_VALID) return 1;
@@ -300,11 +301,11 @@ int PlayerHoleCards::GetHand(char c1, char c2, bool suited)
 	char suit='s';
 	if (suited) suit='h';
 
-	return GetHand(Card('h',c1),Card(suit,c2));
+	return GetHand(BotCard('h',c1),BotCard(suit,c2));
 }
 
 /* PlayerHoleCards::setHandValid() ********************************************/
-void PlayerHoleCards::setHandValid(BotCardc1, BotCardc2, int mask)
+void PlayerHoleCards::setHandValid(BotCard c1, BotCard c2, int mask)
 {
 	if (c1.GetRank()>=13||c1.GetRank()<0||c2.GetRank()>=13||c2.GetRank()<0) {
 		cout << "err";
@@ -334,11 +335,11 @@ void PlayerHoleCards::setHandValid(char c1, char c2, bool suited, int mask)
 	char suit='s';
 	if (suited) suit='h';
 
-	return setHandValid(Card('h',c1),Card(suit,c2),mask);
+	return setHandValid(BotCard('h',c1),BotCard(suit,c2),mask);
 }
 
 /* PlayerHoleCards::setHandInvalid() ******************************************/
-void PlayerHoleCards::setHandInvalid(BotCardc1, BotCardc2)
+void PlayerHoleCards::setHandInvalid(BotCard c1, BotCard c2)
 {
 	if (c1.GetRank()>13||c1.GetRank()<0||c2.GetRank()>13||c2.GetRank()<0) {
 		cout << "err";
@@ -368,5 +369,5 @@ void PlayerHoleCards::setHandInvalid(char c1, char c2, bool suited)
 	char suit='s';
 	if (suited) suit='h';
 
-	return setHandInvalid(Card('h',c1),Card(suit,c2));
+	return setHandInvalid(BotCard('h',c1),BotCard(suit,c2));
 }

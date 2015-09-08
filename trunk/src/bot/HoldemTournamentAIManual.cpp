@@ -2,7 +2,11 @@
 /* #includes ******************************************************************/
 
 #include "HoldemTournamentAI.h"
-#include "TournamentData.h"
+#include <string>
+#include <iostream>
+#include <msgqueue.h>
+#include "Poker/card.h"
+//#include "TournamentData.h"
 
 /* Constructer / Destructer ***************************************************/
 HoldemTournamentAIManual::HoldemTournamentAIManual(MsgQueueBase* q):HoldemTournamentAIBase(q)
@@ -29,7 +33,7 @@ ActionRet HoldemTournamentAIManual::getPlay()
 
 	TableTexture t=evalTexture();
 
-	/* print info *********************/
+	/* print info ********************
 	cur (40,baseY);
 	color (CUR_WHITE);
 	cout << "Agg: ";
@@ -108,7 +112,7 @@ ActionRet HoldemTournamentAIManual::getPlay()
 	}
 
 	/* print decisions ****************/
-	cur(40,baseY+1);
+	//cur(40,baseY+1);
 	cout << "stage: " << (char)table->getStage() << "  act: " << (char)ret.action << " " << ret.amt << endl;
 
 	if (ret.action==FOLD) {
@@ -220,10 +224,10 @@ TableTexture HoldemTournamentAIManual::evalTexture(bool debug)
 		cout << " pos: "		<< ret.activebefore << " + " << ret.activeafter << " = " << ret.totalaction << endl;
 		cout << endl;
 		
-		cout << "dangerCard: "  << ret.dangerBotCard<< endl;
+		cout << "dangerCard: "  << ret.dangercard<< endl;
 		cout << " flush++: "    << ret.flushscare << endl;
 		cout << " straight++: " << ret.straightscare << endl;
-		cout << " overcard: "   << ret.overBotCard<< endl;
+		cout << " overcard: "   << ret.overcard<< endl;
 		cout << endl;
 	}
 
@@ -385,7 +389,7 @@ ActionRet HoldemTournamentAIManual::pfValuePlay(const TableTexture& t, bool debu
 			valCall=true;
 			static int tmpCtr=0;
 			tmpCtr++;
-			cur(0,11) << "10 J fool prevention: " << tmpCtr << endl;
+			// cur(0,11) << "10 J fool prevention: " << tmpCtr << endl;
 		}
 	}
 
@@ -556,10 +560,11 @@ ActionRet HoldemTournamentAIManual::probeBet(const TableTexture& t, bool debug)
 		h=table->getHand();
 
 	bool poorHand=false;
+
 	bool noAction=(getTotalRaises()==0);
 	bool headsUp=(table->getPlayersActive()<=2);
 	while (tmpHand.size()>0) {
-		BotCardtmp=tmpHand.HighCard();
+		BotCard tmp=tmpHand.HighCard();
 		if (tmp.GetRank()==h[0].GetRank()) poorHand=true;
 		if (tmp.GetRank()==h[1].GetRank()) poorHand=true;
 	}
@@ -617,13 +622,13 @@ ActionRet HoldemTournamentAIManual::valuePlay(const TableTexture& t, bool debug)
 	if (!t.trips&&!t.pair) {
 		//profile_line ("Simple Board");
 		tmpHand=table->getBoard();
-		BotCardboardHigh=tmpHand.HighCard();
+		BotCard boardHigh=tmpHand.HighCard();
 		if (h[0].GetRank()==boardHigh.GetRank()||h[1].GetRank()==boardHigh.GetRank()) toggleVar(medHand); // Top Pair
 		if (h[0].GetRank()==h[1].GetRank()&&h[0].GetRank()>boardHigh.GetRank())       toggleVar(medHand); // Over Pair
 		tmpHand=table->getBoard()+table->getHand();
-		BotCardtrip=tmpHand.Trip();
-		BotCardp1=tmpHand.Pair();
-		BotCardp2=tmpHand.Pair();
+		BotCard trip=tmpHand.Trip();
+		BotCard p1=tmpHand.Pair();
+		BotCard p2=tmpHand.Pair();
 		if (trip!=NOCARD||(p1!=NOCARD&&p2!=NOCARD)) {
 			toggleVar(goodHand);
 		}
@@ -643,9 +648,9 @@ ActionRet HoldemTournamentAIManual::valuePlay(const TableTexture& t, bool debug)
 	else if (!t.trips) {
 		//profile_line ("Pair Board");
 		tmpHand=table->getBoard();
-		BotCardpair=tmpHand.Pair();
-		BotCardpair2=tmpHand.Pair();
-		BotCardloneCard=tmpHand.HighCard();
+		BotCard pair=tmpHand.Pair();
+		BotCard pair2=tmpHand.Pair();
+		BotCard loneCard=tmpHand.HighCard();
 		if (loneCard.GetRank()==h[0].GetRank()||loneCard.GetRank()==h[1].GetRank()) toggleVar(medHand); // Board two Pair
 		if (h[0].GetRank()==h[1].GetRank()&&h[0].GetRank()>loneCard.GetRank()) toggleVar(medHand); // Over Pair
 		if (h[0].GetRank()==pair.GetRank() ||h[1].GetRank()==pair.GetRank()||

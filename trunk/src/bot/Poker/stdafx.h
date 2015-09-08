@@ -12,12 +12,9 @@
 #endif
 
 #include <stdio.h>
-#include <conio.h>
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <windows.h>
-#include <winsock.h>
 #include <time.h>
 //#include <mysql.h>
 #include <vector>
@@ -30,7 +27,6 @@ using namespace std;
 #include "Card.h"
 #include "PokerHand.h"
 #include "Deck.h"
-#include "utils.h"
 #include "ConfigParser.h"
 
 // TODO: reference additional headers your program requires here
