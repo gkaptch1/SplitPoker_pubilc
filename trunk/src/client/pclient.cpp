@@ -845,7 +845,8 @@ void PClient::serverCmdGamelist(Tokenizer &t)
 int PClient::serverExecute(const char *cmd)
 {
 	Tokenizer t(" ");
-	log_msg("ServerMsg",cmd);
+	//Logging the msg to stdout
+	//log_msg("ServerMsg",cmd);
 	t.parse(cmd);  // parse the command line
 	
 	if (!t.count())

@@ -59,6 +59,7 @@
 #include <QStandardItemModel>
 #include <QGridLayout>
 #include <QCheckBox>
+#include <QMessageBox>
 
 #ifndef NOAUDIO
 # include "Audio.h"
@@ -803,9 +804,16 @@ void WMain::actionCreateGame()
 	CreateGameDialog dialogCreateGame;
 	if (dialogCreateGame.exec() != QDialog::Accepted)
 		return;
-	
+
+	//For this version of the game, we dont allow players to play against bots
+	if(dialogCreateGame.getPlayAgainstBots())
+	{
+		QMessageBox msgBox;
+		msgBox.setText("Bots are not yet implemented in this version.  They will be coming soon!");
+		msgBox.exec();
+		return;
+	}
 	gamecreate gc;
-	
 	gc.name = dialogCreateGame.getName();
 	gc.max_players = dialogCreateGame.getPlayers();
 	gc.stake = dialogCreateGame.getStake();

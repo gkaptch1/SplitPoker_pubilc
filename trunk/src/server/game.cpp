@@ -1371,9 +1371,9 @@ int client_execute(clientcon *client, const char *cmd)
 	// get command argument
 	const string command = t.getNext();
 
-	// Print command received. 
-	const char * c = command.c_str();
-	printf("\ncommand: %s\n", c);
+	// Print command received. Useful for debug purposes.
+	//const char * c = command.c_str();
+	//printf("\ncommand: %s\n", c);
 
 	if (command == "RCARD")
 		return client_cmd_random_card(client, t);
@@ -1456,8 +1456,9 @@ int device_execute(devicecon *device, const char *cmd)
 // returns zero if no cmd was found or no bytes remaining after exec
 int client_parsebuffer(clientcon *client)
 {
+	//Debug statments to view messeges sent to the server.
 	//log_msg("clientsock", "(%d) parse (bufferlen=%d)", client->sock, client->buflen);
-	printf("\nClient msgbuf: %s %d\n", client->msgbuf, client->buflen);	
+	//printf("\nClient msgbuf: %s %d\n", client->msgbuf, client->buflen);	
 
 	int found_nl = -1;
 	for (int i=0; i < client->buflen; i++)
