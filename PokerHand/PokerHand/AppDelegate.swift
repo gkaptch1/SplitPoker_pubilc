@@ -2,9 +2,6 @@
 //  AppDelegate.swift
 //  PokerHand
 //
-//  Created by Michael Rushanan on 7/2/15.
-//  Copyright (c) 2015 Michael Rushanan. All rights reserved.
-//
 
 import UIKit
 

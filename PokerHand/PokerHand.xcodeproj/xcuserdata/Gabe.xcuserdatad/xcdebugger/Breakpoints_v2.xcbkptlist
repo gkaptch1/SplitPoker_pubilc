@@ -10,28 +10,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "PokerHand/ViewController.swift"
-            timestampString = "459357129.453998"
+            timestampString = "474222162.571868"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "133"
-            endingLineNumber = "133"
-            landmarkName = "getRegisterDevice(_:)"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "PokerHand/ViewController.swift"
-            timestampString = "459356992.275702"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "125"
-            endingLineNumber = "125"
-            landmarkName = "getRegisterDevice(_:)"
+            startingLineNumber = "47"
+            endingLineNumber = "47"
+            landmarkName = "getCardsPressed(_:)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

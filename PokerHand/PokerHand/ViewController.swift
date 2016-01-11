@@ -2,9 +2,6 @@
 //  ViewController.swift
 //  PokerHand
 //
-//  Created by Michael Rushanan on 7/2/15.
-//  Copyright (c) 2015 Michael Rushanan. All rights reserved.
-//
 
 import UIKit
 import Foundation
@@ -14,7 +11,7 @@ import Foundation
 class ViewController: UIViewController {
 
     // Create a socket to virtual machine on port 40888.
-    var client:TCPClient = TCPClient(addr: "128.220.247.211", port: 40888)
+    var client:TCPClient = TCPClient(addr: "game.secureonlinepoker.com", port: 40888)
 
     //Text Field representing server IP
     @IBOutlet weak var serverIP: UITextField!
@@ -36,13 +33,8 @@ class ViewController: UIViewController {
         // Do any additional setup after loading the view, typically from a nib.
 
         // TCP connection to the poker server.
-        var(success, errmsg) = self.client.connect(timeout: 10)
-        clientUuid.text = "f154c24f-4c72-4ad2-a6a3-3ee015666cfc"
-        serverIP.text = "128.220.247.211"
-        
-        if !success {
-            println(errmsg)
-        }
+        clientUuid.text = ""
+        serverIP.text = "game.secureonlinepoker.com"
     }
     
     // UI button press.
@@ -50,18 +42,30 @@ class ViewController: UIViewController {
         // Send the RCARD message to poker server.
         // Use NSFileHandle for writing data.
         var(success, errmsg) = self.client.send(str:"RCARD\n")
+        print(errmsg)
+        if !success && errmsg ==  "socket not open" {
+            if (self.serverIP.text != "") {
+                self.client.close()
+                self.client = TCPClient(addr: serverIP.text!, port: 40888)
+                self.client.connect(timeout: 10)
+            } else {
+                self.client.close()
+                self.client.connect(timeout: 10)
+            }
+            (success, errmsg) = self.client.send(str:"RCARD\n")
+        }
         
         if success {
             // Get response from poker server.
-            var data = client.read(1024*10)
+            let data = client.read(1024*10)
             if let d = data {
-                var srvResp = String(bytes: d, encoding: NSUTF8StringEncoding)
-                println("Server response from Get Cards: \(srvResp)")
+                let srvResp = String(bytes: d, encoding: NSUTF8StringEncoding)
+                print("Server response from Get Cards: \(srvResp)")
                 let cards = parseServerResponse(srvResp!)
                 updateCardImages(cards.lCard, strRCard: cards.rCard)
             }
         } else {
-            let alert = UIAlertController(title: "Network Problem", message: "You are not connected to the server.  Try registering your device to open a connection", preferredStyle: UIAlertControllerStyle.Alert)
+            let alert = UIAlertController(title: "Network Problem", message: "You are unable to connect to the server.  Try a different server", preferredStyle: UIAlertControllerStyle.Alert)
             let alertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default) { (UIAlertAction) -> Void in }
             alert.addAction(alertAction)
             presentViewController(alert, animated: true) { () -> Void in }
@@ -74,7 +78,7 @@ class ViewController: UIViewController {
         // Update the tcp connection to make sure it is pointing at the desired server ( if the ip field is not empty
         if (self.serverIP.text != "") {
             self.client.close()
-            self.client = TCPClient(addr: "\(serverIP.text)", port: 40888)
+            self.client = TCPClient(addr: serverIP.text!, port: 40888)
             self.client.connect(timeout: 10)
         } else {
             self.client.close()
@@ -90,10 +94,10 @@ class ViewController: UIViewController {
         if ( self.clientUuid.text == "" ) {
             registrationMessage = "PDEVICE \(version) f154c24f-4c72-4ad2-a6a3-3ee015666cfc\n"
         } else {
-            registrationMessage = "PDEVICE \(version) \(self.clientUuid.text)\n"
+            registrationMessage = "PDEVICE \(version) \(self.clientUuid.text!)\n"
         }
         
-        print(registrationMessage)
+        print(registrationMessage, terminator: "")
         
         var(success, errmsg) = self.client.send(str:registrationMessage)
         
@@ -101,17 +105,17 @@ class ViewController: UIViewController {
             // Get response from poker server.
             var data = client.read(1024*10)
             if let d = data {
-                var srvResp = String(bytes: d, encoding: NSUTF8StringEncoding)
-                let isUUIDErrorMsg = srvResp?.hasPrefix("Optional(\"ERR 32\"")
-                if ( isUUIDErrorMsg! ) {
-                    println(srvResp)
+                let srvResp = String(bytes: d, encoding: NSUTF8StringEncoding)
+                let isUUIDErrorMsg = srvResp!.containsString("ERR 32")
+                if ( isUUIDErrorMsg ) {
+                    print(srvResp)
                     let alert = UIAlertController(title: "Invalid UUID", message: "Please check that your computer client is connected your device has a matching UUID", preferredStyle: UIAlertControllerStyle.Alert)
                     let alertAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default) { (UIAlertAction) -> Void in }
                     alert.addAction(alertAction)
                     presentViewController(alert, animated: true) { () -> Void in }
                     return
                 }
-                println("Server response from Register: \(srvResp)")
+                print("Server response from Register: \(srvResp)")
             }
             
             //Listen async for incoming messages from the server updating the cards displayed
@@ -121,13 +125,13 @@ class ViewController: UIViewController {
                 while true {
                     data = self.client.read(1024*10)
                     if let d = data {
-                        var srvResp = String(bytes: d, encoding: NSUTF8StringEncoding)
-                        println("Server response from Continual Listen: \(srvResp)")
+                        let srvResp = String(bytes: d, encoding: NSUTF8StringEncoding)
+                        print("Server response from Continual Listen: \(srvResp)")
                         if (srvResp != nil) {
                             let cards = self.parseServerResponse(srvResp!)
                             //Do the UI update on the main thread
                             dispatch_async(dispatch_get_main_queue()) {
-                                println("Updating Cards on Main Thread")
+                                print("Updating Cards on Main Thread")
                                 self.updateCardImages(cards.lCard, strRCard: cards.rCard)
                             }
                         }
@@ -136,7 +140,7 @@ class ViewController: UIViewController {
             }
             
         } else {
-            println(errmsg);
+            print(errmsg);
         }
         
     }
@@ -146,16 +150,16 @@ class ViewController: UIViewController {
         
         // Parse the server response string into an array.
         let srvRsp = srvRsp.stringByReplacingOccurrencesOfString("\r\n", withString: "")
-        var srvRspArray = split(srvRsp) {$0 == " "}
+        var srvRspArray = srvRsp.characters.split {$0 == " "}.map { String($0) }
         var device: String = srvRspArray[0]
         var table: String = srvRspArray[1] + srvRspArray[2]
-        var hole_cards: Int = srvRspArray[3].toInt()!
-        var strLCard: String = srvRspArray[4]
-        var strRCard: String = srvRspArray[5]
+        var hole_cards: Int = Int(srvRspArray[3])!
+        let strLCard: String = srvRspArray[4]
+        let strRCard: String = srvRspArray[5]
         
         //println("\(device) \(table) \(hole_cards) \(strLCard) \(strRCard)")
         
-        println("\(strLCard) and \(strRCard)")
+        print("\(strLCard) and \(strRCard)")
         
         return (strLCard, strRCard)
     }
